@@ -1,0 +1,42 @@
+# vim: set ft=yaml ts=2 expandtab:
+---
+
+dependency:
+  name: galaxy
+  options:
+    role-file: idontexist.yml   # avoid warning while running molecule 
+    requirements-file: molecule/default/requirements.yml
+
+driver:
+  name: delegated
+  options:
+    managed: false
+    login_cmd_template: 'podman exec -ti {instance} bash'
+    ansible_connection_options:
+      ansible_connection: buildah
+
+platforms:
+- name: ci-${CI_NAME-"rocky8"}
+  groups:
+  - ci
+
+provisioner:
+  name: ansible
+  ansible_args:
+    - --tags=all,debug
+    - --diff
+  config_options:
+    defaults:
+      gathering: smart
+      interpreter_python: auto
+      stdout_callback: yaml
+      bin_ansible_callbacks: true
+  lint:
+    name: ansible-lint
+
+verifier:
+  name: ansible
+  lint:
+    name: ansible-lint
+
+...

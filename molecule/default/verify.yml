@@ -1,0 +1,13 @@
+# vim: set ft=yaml ts=2 expandtab:
+---
+
+- name: verify
+  hosts: ci
+
+  tasks:
+
+  - name: Example assertion
+    assert:
+      that: true
+
+...

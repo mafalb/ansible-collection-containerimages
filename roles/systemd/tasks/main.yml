@@ -1,0 +1,43 @@
+# vim: set ft=yaml ts=2 expandtab:
+---
+
+- name: required packages are present
+  package:
+    name:
+    - file
+    - which 
+    - sudo
+    - iproute
+    - systemd
+
+- name: find unneeded systemd files
+  find:
+    paths:
+    - /lib/systemd/system/sockets.target.wants
+    patterns:
+    - '*udev*'
+    - '*initctl*'
+    file_type: link
+  register: _unneeded_files_1
+
+- name: find unneeded systemd files
+  find:
+    paths:
+    - /lib/systemd/system/sysinit.target.wants
+    - /lib/systemd/system/multi-user.target.wants
+    - /lib/systemd/system/local-fs.target.wants
+    - /lib/systemd/system/basic.target.wants
+    - /lib/systemd/system/anaconda.target.wants
+    file_type: link
+    excludes:
+    - systemd-tmpfiles-setup.service
+    - systemd-user-sessions.service
+  register: _unneeded_files_2
+
+- name: remove unneeded systemd files
+  file: 
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ _unneeded_files_1.files }} + {{ _unneeded_files_2.files }}"
+  
+...
