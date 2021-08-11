@@ -32,5 +32,6 @@
     when:
     - inventory_hostname not in ['ci-debian9','ci-centos7']
     - inventory_hostname is not match('ci-fedora')
+    - ansible_os_family == 'RedHat'
 
 ...
