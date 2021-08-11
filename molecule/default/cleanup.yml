@@ -8,5 +8,6 @@
     ci_image: "{{ lookup('env','CI_IMAGE') }}"
   roles:
   - role: mafalb.containerimages.cleanup
+    when: false
 
 ...
