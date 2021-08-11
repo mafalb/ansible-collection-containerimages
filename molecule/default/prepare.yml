@@ -7,7 +7,7 @@
     ci_name: "{{ lookup('env','CI_NAME') }}"
     ci_image: "{{ lookup('env','CI_IMAGE') }}"
   tasks:
-  - name: buildah instance is created
+  - name: buildah instance is created  # noqa no-changed-when
     command: buildah --name ci-{{ ci_name }} from {{ ci_image }}
 
 ...
