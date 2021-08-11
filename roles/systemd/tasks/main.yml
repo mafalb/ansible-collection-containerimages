@@ -1,14 +1,24 @@
 # vim: set ft=yaml ts=2 expandtab:
 ---
 
+- name: get OS specific variables
+  with_first_found:
+  - "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
+  - "{{ ansible_os_family }}.yml"
+  include_vars:
+    file: "{{ item }}"
+
+- name: yum plugins are enabled
+  lineinfile:
+    path: /etc/yum.conf
+    line: plugins=1
+    regexp: '^plugins='
+  backup: true
+  when: yum_needs_plugin|default(false)|bool
+
 - name: required packages are present
   package:
-    name:
-    - file
-    - which
-    - sudo
-    - iproute
-    - systemd
+    name: "{{ packages }}"
 
 - name: find unneeded systemd files
   find:

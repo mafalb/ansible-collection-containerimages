@@ -7,5 +7,8 @@ packages:
 - sudo
 - iproute
 - systemd
+- yum-plugin-ovl 
+
+yum_needs_plugin: true
 
 ...

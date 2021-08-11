@@ -2,10 +2,9 @@
 ---
 
 packages:
-- file
-- which
 - sudo
-- iproute
 - systemd
+- python3
+- python3-apt
 
 ...
