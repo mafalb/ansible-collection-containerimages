@@ -12,7 +12,7 @@
   - name: python 2 is installed
     assert:
       that:
-      - "'python2' in ansible_facts.packages"
+      - "'python' in ansible_facts.packages"
       - "'python3' not in ansible_facts.packages"
     when: inventory_hostname in ['ci-debian9','ci-centos7']
 
