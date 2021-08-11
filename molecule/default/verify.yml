@@ -16,10 +16,21 @@
       - "'python3' not in ansible_facts.packages"
     when: inventory_hostname in ['ci-debian9','ci-centos7']
 
-  - name: python 3 is installed
+  - name: python 3 or platform-python is installed
     assert:
       that:
-      - "'python3' in ansible_facts.packages"
-    when: inventory_hostname not in ['ci-debian9','ci-centos7']
+      - "'python3' in ansible_facts.packages or 'platform-python' in ansible_facts.packages"
+      - "not 'python3' in ansible_facts.packages and 'platform-python' in ansible_facts.packages"
+    when:
+    - inventory_hostname not in ['ci-debian9','ci-centos7']
+
+  - name: platform python is installed
+    assert:
+      that:
+      - "'platform-python' in ansible_facts.packages"
+      - "'python3' not in ansible_facts.packages"
+    when:
+    - inventory_hostname not in ['ci-debian9','ci-centos7']
+    - inventory_hostname is not match('ci-fedora')
 
 ...
