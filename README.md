@@ -1,6 +1,5 @@
 # Ansible Collection - mafalb.containerimages
 
-
 |||
 |---|---|
 |master|![master branch](https://github.com/mafalb/ansible-collection-containerimages/workflows/CI/badge.svg?branch=master)|
@@ -11,7 +10,7 @@ Ansible collection mafalb.containerimages
 
 ## Roles
 
-### [mafalb.containerimages.roleX](roles/roleX }}/README.md)
+### [mafalb.containerimages.systemd](roles/systemd/README.md)
 
 ## License
 
