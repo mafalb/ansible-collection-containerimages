@@ -20,7 +20,7 @@
     assert:
       that:
       - "'python3' in ansible_facts.packages or 'platform-python' in ansible_facts.packages"
-      - "not 'python3' in ansible_facts.packages and 'platform-python' in ansible_facts.packages"
+      - not ('python3' in ansible_facts.packages and 'platform-python' in ansible_facts.packages)
     when:
     - inventory_hostname not in ['ci-debian9','ci-centos7']
 
