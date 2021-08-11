@@ -14,12 +14,12 @@
       that:
       - "'python2' in ansible_facts.packages"
       - "'python3' not in ansible_facts.packages"
-    when: ansible_inventory_host in ['ci-debian9','ci-centos7']
+    when: inventory_hostname in ['ci-debian9','ci-centos7']
 
   - name: python 3 is installed
     assert:
       that:
       - "'python3' in ansible_facts.packages"
-    when: ansible_inventory_host not in ['ci-debian9','ci-centos7']
+    when: inventory_hostname not in ['ci-debian9','ci-centos7']
 
 ...
