@@ -18,7 +18,7 @@
     command: <
       buildah run ci-{{ ci_name }}
       bash -c "apt update &&
-               apt-get install -y {{ python_pkg[ci_name]|default('python3' }}"
+               apt-get install -y {{ python_pkg[ci_name]|default('python3') }}"
     when:
     - ci_name is match("ubuntu") or ci_name is match("debian")
 
