@@ -259,7 +259,14 @@ jobs:
         source ~/.virtualenvs/molecule/bin/activate
         ansible --version | grep "^ansible.* ${{ matrix.ansible_version }}"
 
-    - name: molecule tests
+    - name: molecule tests for ansible 2.9
+      if: "2.9" == "${{ matrix.ansible_version }}"
+      run: |
+        buildah unshare
+        source ~/.virtualenvs/molecule/bin/activate
+        molecule test
+
+    - name: molecule tests for ansible 2.10+
       run: |
         source ~/.virtualenvs/molecule/bin/activate
         molecule test
