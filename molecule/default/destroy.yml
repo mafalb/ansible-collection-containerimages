@@ -10,7 +10,7 @@
 
   - name: instances are destroyed  # noqa no-changed-when 301
     command: buildah rm {{ item.name }}
-    loop: "{{ molecule_yml.platforms }}" 
+    loop: "{{ molecule_yml.platforms }}"
     register: buildahs
 
     # Mandatory configuration for Molecule to function.
