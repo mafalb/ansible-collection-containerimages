@@ -1,6 +1,29 @@
 # vim: set ft=yaml ts=2 expandtab:
 ---
 
+- name: bootstrap
+  hosts: all
+  gather_facts: false
+  vars:
+    ci_name: "{{ lookup('env','CI_NAME') }}"
+
+  tasks:
+
+  - name: assertions
+    assert:
+      that:
+      - ci_name|length > 0
+
+  - name: install python
+    raw: apt update && apt install python
+    when: ci_name == "debian9"
+
+  - name: install python3
+    raw: apt update && apt install python3
+    when:
+    - ci_name is match("ubuntu") or ci_name is match("debian")
+    - ci_name != "debian9"
+
 - name: converge containerimages
   hosts: ci
   vars:

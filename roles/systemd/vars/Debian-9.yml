@@ -1,0 +1,10 @@
+# vim: set ft=yaml ts=2 expandtab:
+---
+
+packages:
+- sudo
+- systemd
+- python
+- python-apt
+
+...
