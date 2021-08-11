@@ -1,0 +1,9 @@
+# vim: set ft=yaml ts=2 expandtab:
+---
+
+pkg_mgr_cache:
+  yum: /var/cache/yum
+  dnf: /var/cache/dnf
+  apt: /var/lib/apt/lists
+
+...

@@ -11,6 +11,7 @@ Ansible collection mafalb.containerimages
 ## Roles
 
 ### [mafalb.containerimages.systemd](roles/systemd/README.md)
+### [mafalb.containerimages.cleanup](roles/cleanup/README.md)
 
 ## License
 
