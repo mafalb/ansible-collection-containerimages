@@ -8,7 +8,7 @@
     ci_image: "{{ lookup('env','CI_IMAGE') }}"
     python_pkg:
       debian9: python
- 
+
   tasks:
 
   - name: buildah instance is created  # noqa no-changed-when 301
