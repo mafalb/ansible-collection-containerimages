@@ -13,7 +13,7 @@
     path: /etc/yum.conf
     line: plugins=1
     regexp: '^plugins='
-  backup: true
+    backup: true
   when: yum_needs_plugin|default(false)|bool
 
 - name: required packages are present
