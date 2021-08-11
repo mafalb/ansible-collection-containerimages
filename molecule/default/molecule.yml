@@ -19,10 +19,6 @@ platforms:
   image: ${CI_IMAGE:-quay.io/rockylinux/rockylinux:8}
   groups:
   - ci
-- name: ci-${CI_NAME:-ubuntu20}
-  image: ${CI_IMAGE:-docker.io/ubuntu:focal}
-  groups:
-  - ci
 
 provisioner:
   name: ansible
