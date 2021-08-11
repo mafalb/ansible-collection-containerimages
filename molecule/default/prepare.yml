@@ -20,7 +20,7 @@
     command: buildah --name ci-{{ ci_name }} from {{ ci_image }}
 
   - name: python is present  # noqa no-changed-when 301
-    shell: <
+    shell: |
       buildah run ci-{{ ci_name }} bash -c "apt update &&
         apt-get install -y {{ python_pkg[ci_name]|default('python3') }}"
     when:
