@@ -146,6 +146,7 @@ jobs:
         source ~/virtualenv/bin/activate
         ansible --version
         which ansible-test
+        ansible-lint --version
         ansible --version | grep "^ansible.* ${{ matrix.ansible_version }}"
 
     - name: check python version
