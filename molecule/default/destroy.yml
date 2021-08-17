@@ -8,8 +8,23 @@
   no_log: "{{ molecule_no_log }}"
   tasks:
 
-  - name: instances are destroyed  # noqa no-changed-when 301
-    command: buildah rm {{ item.name }}
+  - name: debug
+    debug:
+      var: instance_conf_dict
+
+  - name: debug
+    debug:
+      var: instance_conf
+
+  - name: get list of all buildahs
+    command: buildah containers --json
+    changed_when: false
+    register: running_buildahs
+
+  - name: instances are destroyed
+    mafalb.containerimages.buildah_container:
+      name: "{{ item.name }}"
+      state: absent
     loop: "{{ molecule_yml.platforms }}"
     register: buildahs
 

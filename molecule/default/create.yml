@@ -16,29 +16,33 @@
 
   tasks:
 
-  - name: buildah instance is created  # noqa no-changed-when 301
-    command: buildah --name {{ item.name }} from {{ item.image }}
-    with_items: "{{ molecule_yml.platforms }}"
+  - name: buildah instance is created
+    mafalb.containerimages.buildah_container:
+      name: "{{ item.name }}"
+      image: "{{ item.image }}"
+      state: present
+    loop: "{{ molecule_yml.platforms }}"
     register: buildahs
 
   - name: debug
-    debug: var=buildahs.results
+    debug:
+      var: buildahs
 
   - name: python is present  # noqa no-changed-when 301
     shell: |
-      buildah run {{ buildah.item.name }} bash -c "apt update &&
-        apt-get install -y {{ python_pkg[buildah.item.name|replace('ci-','',1)]|default('python3') }}"
+      buildah run {{ buildah.container.Container }} bash -c "apt update &&
+        apt-get install -y {{ python_pkg[buildah.container.Container|replace('ci-','',1)]|default('python3') }}"
     loop: "{{ buildahs.results }}"
     when:
-    - buildah.item.name is match("ci-ubuntu") or buildah.item.name is match("ci-debian")
+    - buildah.container.Container is match("ci-ubuntu") or buildah.container.Container is match("ci-debian")
     loop_control:
       loop_var: buildah
 
   - name: Populate instance config dict
     set_fact:
       instance_conf_dict: {
-        instance: "{{ buildah.item.name }}",
-        login_cmd: 'podman exec -ti {{ buildah.item.name }} bash',
+        instance: "{{ buildah.container.Container }}",
+        login_cmd: 'podman exec -ti {{ buildah.container.Container }} bash',
         connection: buildah,
       }
     loop: "{{ buildahs.results }}"
