@@ -28,9 +28,11 @@ jobs:
 
         - ansible_version: '2.9'
           python-version: 2.7
+          ansible-lint_version: '<5'
 
         - ansible_version: '2.9'
           python-version: 3.5
+          ansible-lint_version: '<5'
 
         - ansible_version: '2.9'
           python-version: 3.6
@@ -137,7 +139,7 @@ jobs:
         . ~/virtualenv/bin/activate
         pip install wheel
         pip install -U pip setuptools
-        pip install "ansible-core==${{ matrix.ansible_core_version }}.*" ansible ansible-lint flake8 pylint 'pycodestyle<2.7'
+        pip install "ansible-core==${{ matrix.ansible_core_version }}.*" ansible ansible-lint${{ matrix.ansible-lint_version }} flake8 pylint 'pycodestyle<2.7'
 
     - name: check ansible version
       run: |
