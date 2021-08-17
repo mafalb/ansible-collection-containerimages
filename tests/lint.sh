@@ -55,7 +55,12 @@ echo "yamllint..."
 yamllint -s .
 
 echo "ansible-lint..."
-ansible-lint -v
+if test "$ANSIBLE_LINT_VERSION" == 4
+then
+	ansible-lint -v -c .ansible-lint-4
+else
+	ansible-lint -v
+fi
 
 echo "ansible-lint of variables..."
 ansible-lint -v roles/*/vars/*.yml
