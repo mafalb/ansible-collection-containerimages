@@ -4,6 +4,12 @@
 - name: verify
   hosts: ci
 
+  vars:
+    pkg_mgr_cache:
+    - /var/lib/apt/lists
+    - /var/cache/dnf
+    - /var/cache/yum
+
   tasks:
 
   - name: get installed packages
@@ -37,12 +43,20 @@
   - name: get contents of package manager cache
     shell: |
       set -o pipefail
-      ls -1 {{ pkg_mgr_cache }}|wc -l
+      ls -1 {{ item }}|wc -l
+    loop: "{{ pkg_mgr_cache }}"
     register: _pkg_mgr_cache
     changed_when: false
+    failed_when: false
+
+  - name: debug
+    debug:
+      var: _pkg_mgr_cache
 
   - name: package manager cache is empty
     assert:
-      that: _pkg_mgr_cache.stdout == "0"
+      that: item.stdout == "0"
+    when: item.rc == 0
+    loop: "{{ _pkg_mgr_cache.results }}"
 
 ...
