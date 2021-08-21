@@ -33,7 +33,7 @@ jobs:
         - ansible_version: '2.9'
           python-version: 3.5
           ansible-lint_version: '<5'
-          cryptography_version: '<3.2.1'
+          cryptography_version: '<3.2'
 
         - ansible_version: '2.9'
           python-version: 3.6
