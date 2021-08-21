@@ -33,6 +33,7 @@ jobs:
         - ansible_version: '2.9'
           python-version: 3.5
           ansible-lint_version: '<5'
+          cryptography_version: '<3.2.1'
 
         - ansible_version: '2.9'
           python-version: 3.6
@@ -130,7 +131,7 @@ jobs:
         . ~/virtualenv/bin/activate
         pip install wheel
         pip install -U pip setuptools
-        pip install "ansible==${{ matrix.ansible_version }}.*" ansible-lint flake8 pylint 'pycodestyle<2.7'
+        pip install "ansible==${{ matrix.ansible_version }}.*" ansible-lint cryptography${{ matrix.cryptography_version }} flake8 pylint 'pycodestyle<2.7'
 
     - name: install ansible for python 3
       if: ${{ matrix.python-version != '2.7' && matrix.ansible_core_version }}
