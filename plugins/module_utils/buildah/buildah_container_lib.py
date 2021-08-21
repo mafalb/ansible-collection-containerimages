@@ -10,7 +10,7 @@ import json  # noqa: F402
 from distutils.version import LooseVersion  # noqa: F402
 
 from ansible.module_utils._text import to_bytes, to_native  # noqa: F402
-from ..podman.common import lower_keys
+from ansible_collections.mafalb.containerimages.plugins.module_utils.podman.common import lower_keys
 
 __metaclass__ = type
 

@@ -912,8 +912,8 @@ container:
 """
 
 from ansible.module_utils.basic import AnsibleModule  # noqa: F402
-from ..module_utils.podman.podman_container_lib import PodmanManager  # noqa: F402
-from ..module_utils.podman.podman_container_lib import ARGUMENTS_SPEC_CONTAINER  # noqa: F402
+from ansible_collections.mafalb.containerimages.plugins.module_utils.podman.podman_container_lib import PodmanManager  # noqa: F402
+from ansible_collections.mafalb.containerimages.plugins.module_utils.podman.podman_container_lib import ARGUMENTS_SPEC_CONTAINER  # noqa: F402
 
 
 def main():

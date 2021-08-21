@@ -116,8 +116,8 @@ container:
 """
 
 from ansible.module_utils.basic import AnsibleModule  # noqa: E402
-from ..module_utils.buildah.buildah_container_lib import BuildahManager  # noqa: E402
-from ..module_utils.buildah.buildah_container_lib import ARGUMENTS_SPEC_CONTAINER  # noqa: E402
+from ansible_collections.mafalb.containerimages.plugins.module_utils.buildah.buildah_container_lib import BuildahManager  # noqa: E402
+from ansible_collections.mafalb.containerimages.plugins.module_utils.buildah.buildah_container_lib import ARGUMENTS_SPEC_CONTAINER  # noqa: E402
 
 
 def main():
