@@ -15,7 +15,7 @@
       that:
       - ci_name|length > 0
 
-  - name: set image configuration
+  - name: set image configuration  # noqa: no-changed-when 301
     command: "{{ item }}"
     delegate_to: localhost
     loop:
@@ -25,7 +25,7 @@
     - buildah config --env container=docker {{ inventory_hostname }}
     - buildah config --volume /sys/fs/cgroup {{ inventory_hostname }}
 
-  - name: commit
+  - name: commit  # noqa: no-changed-when 301
     delegate_to: localhost
     command: buildah commit {{ inventory_hostname }} docker-daemon:localhost/{{ ci_name }}-systemd:ci
 

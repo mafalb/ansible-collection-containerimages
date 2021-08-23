@@ -71,5 +71,6 @@
       - ci_name|length > 0
   - name: the built images are present
     command: docker inspect localhost/{{ ci_name }}-systemd:ci
+    changed_when: false
 
 ...
