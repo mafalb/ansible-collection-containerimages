@@ -274,8 +274,7 @@ jobs:
     - name: molecule tests for ansible 2.9
       if: ${{ matrix.ansible_version == '2.9' }}
       run: |
-        export CI_NAME CI_IMAGE PY_COLORS ANSIBLE_FORCE_COLOR
-        sudo bash tests/molecule-test.sh ~runner/.virtualenvs/molecule/bin/activate
+        sudo --preserve-env=CI_NAME,CI_IMAGE,PY_COLORS,ANSIBLE_FORCE_COLOR bash tests/molecule-test.sh ~runner/.virtualenvs/molecule/bin/activate
 
     - name: molecule tests for ansible 2.10+
       if: ${{ matrix.ansible_version != '2.9' }}
