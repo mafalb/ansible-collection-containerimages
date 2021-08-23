@@ -9,4 +9,24 @@
   roles:
   - role: mafalb.containerimages.cleanup
 
+  tasks:
+  - name: assert that ci_name is set
+    assert:
+      that:
+      - ci_name|length > 0
+
+  - name: set image configuration
+    command: "{{ item }}"
+    delegate_to: localhost
+    loop:
+    - buildah config --cmd /lib/systemd/systemd {{ inventory_hostname }}
+    - buildah config --stop-signal SIGRTMIN+3 {{ inventory_hostname }}
+    - buildah config --author "Markus Falb <markus.falb@mafalb.at>" {{ inventory_hostname }}
+    - buildah config --env container=docker {{ inventory_hostname }}
+    - buildah config --volume /sys/fs/cgroup {{ inventory_hostname }}
+
+  - name: commit
+    delegate_to: localhost
+    command: buildah commit {{ inventory_hostname }} docker-daemon:localhost/{{ ci_name }}-systemd:ci
+
 ...

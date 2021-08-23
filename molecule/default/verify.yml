@@ -59,4 +59,17 @@
     when: item.rc == 0
     loop: "{{ _pkg_mgr_cache.results }}"
 
+- name: Check built images
+  hosts: ci
+  vars:
+    ci_name: "{{ lookup('env','CI_NAME') }}"
+    ci_image: "{{ lookup('env','CI_IMAGE') }}"
+  tasks:
+  - name: assert that ci_name is set
+    assert:
+      that:
+      - ci_name|length > 0
+  - name: the built images are present
+    command: docker inspect localhost/{{ ci_name }}-systemd:ci
+
 ...
