@@ -274,8 +274,10 @@ jobs:
     - name: molecule tests for ansible 2.9
       if: ${{ matrix.ansible_version == '2.9' }}
       run: |
+        sudo -i <<GUGU
         source ~runner/.virtualenvs/molecule/bin/activate
         molecule test
+        GUGU
 
     - name: molecule tests for ansible 2.10+
       if: ${{ matrix.ansible_version != '2.9' }}
