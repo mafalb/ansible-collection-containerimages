@@ -69,7 +69,26 @@
     assert:
       that:
       - ci_name|length > 0
+  - block:
+    - name: get the list of docker images
+      command: docker images
+      register: _docker_images
+      changed_when: false
+    - name: get the list of podman images
+      command: podman images
+      register: _podman_images
+      changed_when: false
+    delegate_to: localhost
+
+  - name: debug
+    debug:
+      var: _docker_images
+  - name: debug
+    debug:
+      var: _podman_images
+
   - name: the built images are present
+    delegate_to: localhost
     command: docker inspect localhost/{{ ci_name }}-systemd:ci
     changed_when: false
 
