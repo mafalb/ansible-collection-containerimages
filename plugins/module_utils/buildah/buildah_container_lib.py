@@ -16,15 +16,26 @@ __metaclass__ = type
 
 ARGUMENTS_SPEC_CONTAINER = dict(
     name=dict(required=True, type='str'),
-    env=dict(type='dict'),
     executable=dict(default='buildah', type='str'),
     podman_executable=dict(default='podman', type='str'),
     state=dict(type='str', default='present', choices=[
         'absent', 'present']),
     image=dict(type='str'),
+    annotation=dict(type='dict'),
+    authfile=dict(type='path'),
+    blkio_weight=dict(type='int'),
+    blkio_weight_device=dict(type='dict'),
+    cap_add=dict(type='list', elements='str', aliases=['capabilities']),
+    cap_drop=dict(type='list', elements='str'),
+    cgroup_parent=dict(type='path'),
+    cgroupns=dict(type='str'),
+    cgroups=dict(type='str'),
+    cidfile=dict(type='path'),
+    env=dict(type='dict'),
     command=dict(type='raw'),
     debug=dict(type='bool', default=False),
     workdir=dict(type='str', aliases=['working_dir'])
+
 )
 
 
@@ -141,6 +152,110 @@ class BuildahModuleParams:
                                   "version %s only! Current version is %s" % (
                                       param, minv, self.buildah_version))
 
+    def addparam_annotation(self, c):
+        for annotate in self.params['annotation'].items():
+            c += ['--annotation', '='.join(annotate)]
+        return c
+
+    def addparam_authfile(self, c):
+        return c + ['--authfile', self.params['authfile']]
+
+    def addparam_blkio_weight(self, c):
+        return c + ['--blkio-weight', self.params['blkio_weight']]
+
+    def addparam_blkio_weight_device(self, c):
+        for blkio in self.params['blkio_weight_device'].items():
+            c += ['--blkio-weight-device', ':'.join(blkio)]
+        return c
+
+    def addparam_cap_add(self, c):
+        for cap_add in self.params['cap_add']:
+            c += ['--cap-add', cap_add]
+        return c
+
+    def addparam_cap_drop(self, c):
+        for cap_drop in self.params['cap_drop']:
+            c += ['--cap-drop', cap_drop]
+        return c
+
+    def addparam_cgroups(self, c):
+        self.check_version('--cgroups', minv='1.6.0')
+        return c + ['--cgroups=%s' % self.params['cgroups']]
+
+    def addparam_cgroupns(self, c):
+        self.check_version('--cgroupns', minv='1.6.2')
+        return c + ['--cgroupns=%s' % self.params['cgroupns']]
+
+    def addparam_cgroup_parent(self, c):
+        return c + ['--cgroup-parent', self.params['cgroup_parent']]
+
+    def addparam_cidfile(self, c):
+        return c + ['--cidfile', self.params['cidfile']]
+
+    def addparam_conmon_pidfile(self, c):
+        return c + ['--conmon-pidfile', self.params['conmon_pidfile']]
+
+    def addparam_cpu_period(self, c):
+        return c + ['--cpu-period', self.params['cpu_period']]
+
+    def addparam_cpu_rt_period(self, c):
+        return c + ['--cpu-rt-period', self.params['cpu_rt_period']]
+
+    def addparam_cpu_rt_runtime(self, c):
+        return c + ['--cpu-rt-runtime', self.params['cpu_rt_runtime']]
+
+    def addparam_cpu_shares(self, c):
+        return c + ['--cpu-shares', self.params['cpu_shares']]
+
+    def addparam_cpus(self, c):
+        return c + ['--cpus', self.params['cpus']]
+
+    def addparam_cpuset_cpus(self, c):
+        return c + ['--cpuset-cpus', self.params['cpuset_cpus']]
+
+    def addparam_cpuset_mems(self, c):
+        return c + ['--cpuset-mems', self.params['cpuset_mems']]
+
+    def addparam_detach(self, c):
+        return c + ['--detach=%s' % self.params['detach']]
+
+    def addparam_detach_keys(self, c):
+        return c + ['--detach-keys', self.params['detach_keys']]
+
+    def addparam_device(self, c):
+        for dev in self.params['device']:
+            c += ['--device', dev]
+        return c
+
+    def addparam_device_read_bps(self, c):
+        for dev in self.params['device_read_bps']:
+            c += ['--device-read-bps', dev]
+        return c
+
+    def addparam_device_read_iops(self, c):
+        for dev in self.params['device_read_iops']:
+            c += ['--device-read-iops', dev]
+        return c
+
+    def addparam_device_write_bps(self, c):
+        for dev in self.params['device_write_bps']:
+            c += ['--device-write-bps', dev]
+        return c
+
+    def addparam_device_write_iops(self, c):
+        for dev in self.params['device_write_iops']:
+            c += ['--device-write-iops', dev]
+        return c
+
+    def addparam_dns(self, c):
+        return c + ['--dns', ','.join(self.params['dns'])]
+
+    def addparam_dns_option(self, c):
+        return c + ['--dns-option', self.params['dns_option']]
+
+    def addparam_dns_search(self, c):
+        return c + ['--dns-search', self.params['dns_search']]
+
     def addparam_entrypoint(self, c):
         return c + ['--entrypoint', self.params['entrypoint']]
 
@@ -206,6 +321,83 @@ class BuildahContainerDiff:
             self.diff['after'].update({param_name: after})
             return True
         return False
+
+    def diffparam_annotation(self):
+        before = self.info['config']['annotations'] or {}
+        after = before.copy()
+        if self.module_params['annotation'] is not None:
+            after.update(self.params['annotation'])
+        return self._diff_update_and_compare('annotation', before, after)
+
+    def diffparam_env_host(self):
+        # It's impossible to get from inspest, recreate it if not default
+        before = False
+        after = self.params['env_host']
+        return self._diff_update_and_compare('env_host', before, after)
+
+    def diffparam_blkio_weight(self):
+        before = self.info['hostconfig']['blkioweight']
+        after = self.params['blkio_weight']
+        return self._diff_update_and_compare('blkio_weight', before, after)
+
+    def diffparam_blkio_weight_device(self):
+        before = self.info['hostconfig']['blkioweightdevice']
+        if before == [] and self.module_params['blkio_weight_device'] is None:
+            after = []
+        else:
+            after = self.params['blkio_weight_device']
+        return self._diff_update_and_compare('blkio_weight_device', before, after)
+
+    def diffparam_cap_add(self):
+        before = (self.info['DefaultCapabilities'] + self.info['AddCapabilities'] - self.info['DropCapabilities']) or []
+        before = [i.lower() for i in before]
+        after = []
+        if self.module_params['cap_add'] is not None:
+            for cap in self.module_params['cap_add']:
+                cap = cap.lower()
+                cap = cap if cap.startswith('cap_') else 'cap_' + cap
+                after.append(cap)
+        after += before
+        before, after = sorted(list(set(before))), sorted(list(set(after)))
+        return self._diff_update_and_compare('cap_add', before, after)
+
+    def diffparam_cap_drop(self):
+        before = (self.info['DefaultCapabilities'] + self.info['AddCapabilities'] - self.info['DropCapabilities']) or []
+        before = [i.lower() for i in before]
+        after = before[:]
+        if self.module_params['cap_drop'] is not None:
+            for cap in self.module_params['cap_drop']:
+                cap = cap.lower()
+                cap = cap if cap.startswith('cap_') else 'cap_' + cap
+                if cap in after:
+                    after.remove(cap)
+        before, after = sorted(list(set(before))), sorted(list(set(after)))
+        return self._diff_update_and_compare('cap_drop', before, after)
+
+    def diffparam_cgroup_parent(self):
+        before = self.info['hostconfig']['cgroupparent']
+        after = self.params['cgroup_parent']
+        if after is None:
+            after = before
+        return self._diff_update_and_compare('cgroup_parent', before, after)
+
+    def diffparam_cgroups(self):
+        # Cgroups output is not supported in all versions
+        if 'cgroups' in self.info['hostconfig']:
+            before = self.info['hostconfig']['cgroups']
+            after = self.params['cgroups']
+            return self._diff_update_and_compare('cgroups', before, after)
+        return False
+
+    def diffparam_cidfile(self):
+        before = self.info['hostconfig']['containeridfile']
+        after = self.params['cidfile']
+        labels = self.info['config']['labels'] or {}
+        # Ignore cidfile that is coming from systemd files
+        # https://github.com/containers/ansible-podman-collections/issues/276
+        if 'podman_systemd_unit' in labels:
+            after = before
+        return self._diff_update_and_compare('cidfile', before, after)
 
     # Limited idempotency, it can't guess default values
     def diffparam_env(self):

@@ -20,6 +20,8 @@
     mafalb.containerimages.buildah_container:
       name: "{{ item.name }}"
       image: "{{ item.image }}"
+      cap_add: "{{ item.cap_add if item.cap_add is defined else item.capabilities|default(omit) }}"
+      cap_drop: "{{ item.cap_drop|default(omit) }}"
       state: present
     loop: "{{ molecule_yml.platforms }}"
     register: buildahs

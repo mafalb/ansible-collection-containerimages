@@ -17,6 +17,10 @@ driver:
 platforms:
 - name: ci-${CI_NAME:-rocky8}
   image: ${CI_IMAGE:-quay.io/rockylinux/rockylinux:8}
+  cap_add:
+  # necessary at least for chfn on debian 9 (stretch)
+  #
+  - CAP_AUDIT_WRITE
   groups:
   - ci
 

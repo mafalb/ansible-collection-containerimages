@@ -26,33 +26,11 @@ options:
       - Name of the container
     required: True
     type: str
-  command:
-    description:
-      - Override command of container. Can be a string or a list.
-    type: raw
-  debug:
-    description:
-      - Return additional information which can be helpful for investigations.
-    type: bool
-    default: False
-  env:
-    description:
-      - Set environment variables.
-        This option allows you to specify arbitrary environment variables that
-        are available for the process that will be launched inside of the
-        container.
-    type: dict
   executable:
     description:
       - Path to C(buildah) executable if it is not in the C($PATH) on the
         machine running C(buildah)
     default: 'buildah'
-    type: str
-  podman_executable:
-    description:
-      - Path to C(podman) executable if it is not in the C($PATH) on the
-        machine running C(buildah)
-    default: 'podman'
     type: str
   state:
     description:
@@ -78,6 +56,86 @@ options:
         If no tag is included, C(latest) will be used.
       - Can also be an image ID. If this is the case, the image is assumed to
         be available locally.
+    type: str
+  annotation:
+    description:
+      - Add an annotation to the container. The format is key value, multiple
+        times.
+    type: dict
+  authfile:
+    description:
+      - Path of the authentication file. Default is
+        ``${XDG_RUNTIME_DIR}/containers/auth.json``
+        (Not available for remote commands) You can also override the default
+        path of the authentication file by setting the ``REGISTRY_AUTH_FILE``
+        environment variable. ``export REGISTRY_AUTH_FILE=path``
+    type: path
+  blkio_weight:
+    description:
+      - Block IO weight (relative weight) accepts a weight value between 10 and
+        1000
+    type: int
+  blkio_weight_device:
+    description:
+      - Block IO weight (relative device weight, format DEVICE_NAME[:]WEIGHT).
+    type: dict
+  cap_add:
+    description:
+      - List of capabilities to add to the container.
+    type: list
+    elements: str
+    aliases:
+      - capabilities
+  cap_drop:
+    description:
+      - List of capabilities to drop from the container.
+    type: list
+    elements: str
+  cgroup_parent:
+    description:
+      - Path to cgroups under which the cgroup for the container will be
+        created.
+        If the path is not absolute, the path is considered to be relative to
+        the cgroups path of the init process. Cgroups will be created if they
+        do not already exist.
+    type: path
+  cgroupns:
+    description:
+      - Path to cgroups under which the cgroup for the container will be
+        created.
+    type: str
+  cgroups:
+    description:
+      - Determines whether the container will create CGroups.
+        Valid values are enabled and disabled, which the default being enabled.
+        The disabled option will force the container to not create CGroups,
+        and thus conflicts with CGroup options cgroupns and cgroup-parent.
+    type: str
+  cidfile:
+    description:
+      - Write the container ID to the file
+    type: path
+  command:
+    description:
+      - Override command of container. Can be a string or a list.
+    type: raw
+  debug:
+    description:
+      - Return additional information which can be helpful for investigations.
+    type: bool
+    default: False
+  env:
+    description:
+      - Set environment variables.
+        This option allows you to specify arbitrary environment variables that
+        are available for the process that will be launched inside of the
+        container.
+    type: dict
+  podman_executable:
+    description:
+      - Path to C(podman) executable if it is not in the C($PATH) on the
+        machine running C(buildah)
+    default: 'podman'
     type: str
   workdir:
     description:
