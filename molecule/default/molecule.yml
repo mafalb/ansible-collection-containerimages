@@ -9,13 +9,18 @@ dependency:
 driver:
   name: delegated
   options:
-    managed: false
+    managed: true
     login_cmd_template: 'podman exec -ti {instance} bash'
     ansible_connection_options:
       ansible_connection: buildah
 
 platforms:
-- name: ci-${CI_NAME-"rocky8"}
+- name: ci-${CI_NAME:-rocky8}
+  image: ${CI_IMAGE:-quay.io/rockylinux/rockylinux:8}
+  cap_add:
+  # necessary at least for chfn on debian 9 (stretch)
+  #
+  - CAP_AUDIT_WRITE
   groups:
   - ci
 

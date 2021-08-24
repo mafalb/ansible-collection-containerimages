@@ -55,13 +55,18 @@ echo "yamllint..."
 yamllint -s .
 
 echo "ansible-lint..."
-ansible-lint -v
+if test "$ANSIBLE_LINT_VERSION" == 4
+then
+	ansible-lint -v -c .ansible-lint-4
+else
+	ansible-lint -v
+fi
 
 echo "ansible-lint of variables..."
 ansible-lint -v roles/*/vars/*.yml
 
 echo "flake8..."
-flake8 -v
+flake8 -v --exclude tests/output
 
 echo "ansible-test sanity..."
 # shellcheck disable=SC2068

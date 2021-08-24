@@ -1,0 +1,32 @@
+# vim: set ft=yaml ts=2 expandtab:
+---
+
+- name: Create buildah instances
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  module_defaults:
+    shell:
+      executable: /bin/bash
+
+  vars:
+    python_pkg:
+      debian9: python
+
+  tasks:
+  - name: podman container is present
+    mafalb.containerimages.podman_container:
+      name: test_podman
+      image: quay.io/rockylinux/rockylinux:8
+      state: present
+      debug: true
+
+  - name: buildah container is present
+    mafalb.containerimages.buildah_container:
+      name: test1
+      image: quay.io/rockylinux/rockylinux:8
+      state: present
+      debug: true
+
+...

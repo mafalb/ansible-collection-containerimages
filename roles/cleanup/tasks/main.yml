@@ -1,0 +1,16 @@
+# vim: set ft=yaml ts=2 expandtab:
+---
+
+- name: examine package manager cache
+  find:
+    paths: "{{ pkg_mgr_cache[ansible_pkg_mgr] }}"
+    file_type: any
+  register: _pkg_mgr_cache
+
+- name: package manager cache is cleared
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ _pkg_mgr_cache.files }}"
+
+...

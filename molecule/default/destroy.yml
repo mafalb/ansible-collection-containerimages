@@ -1,0 +1,45 @@
+# vim: set ft=yaml ts=2 expandtab:
+---
+
+- name: Destroy
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  no_log: "{{ molecule_no_log }}"
+  tasks:
+
+  - name: debug
+    debug:
+      var: instance_conf_dict
+
+  - name: debug
+    debug:
+      var: instance_conf
+
+  - name: get list of all buildahs
+    command: buildah containers --json
+    changed_when: false
+    register: running_buildahs
+
+  - name: instances are destroyed
+    mafalb.containerimages.buildah_container:
+      name: "{{ item.name }}"
+      state: absent
+    loop: "{{ molecule_yml.platforms }}"
+    register: buildahs
+
+    # Mandatory configuration for Molecule to function.
+
+  - name: Populate instance config
+    set_fact:
+      instance_conf: {}
+
+  - name: Dump instance config
+    copy:
+      content: |
+        # Molecule managed
+
+        {{ instance_conf | to_json | from_json | to_yaml }}
+      dest: "{{ molecule_instance_config }}"
+      mode: "0644"
+#    when: buildahs.changed | default(false) | bool

@@ -1,0 +1,32 @@
+# vim: set ft=yaml ts=2 expandtab:
+---
+
+- name: converge containerimages
+  hosts: ci
+  vars:
+    ci_name: "{{ lookup('env','CI_NAME') }}"
+    ci_image: "{{ lookup('env','CI_IMAGE') }}"
+  roles:
+  - role: mafalb.containerimages.cleanup
+
+  tasks:
+  - name: assert that ci_name is set
+    assert:
+      that:
+      - ci_name|length > 0
+
+  - name: set image configuration  # noqa: no-changed-when 301
+    command: "{{ item }}"
+    delegate_to: localhost
+    loop:
+    - buildah config --cmd /lib/systemd/systemd {{ inventory_hostname }}
+    - buildah config --stop-signal SIGRTMIN+3 {{ inventory_hostname }}
+    - buildah config --author "Markus Falb <markus.falb@mafalb.at>" {{ inventory_hostname }}
+    - buildah config --env container=docker {{ inventory_hostname }}
+    - buildah config --volume /sys/fs/cgroup {{ inventory_hostname }}
+
+  - name: commit  # noqa: no-changed-when 301
+    delegate_to: localhost
+    command: buildah commit {{ inventory_hostname }} docker-daemon:localhost/{{ ci_name }}-systemd:ci
+
+...

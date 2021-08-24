@@ -44,7 +44,7 @@
     - systemd-user-sessions.service
   register: _unneeded_files_2
 
-- name: remove unneeded systemd files
+- name: unneeded systemd files are absent
   file:
     path: "{{ item.path }}"
     state: absent

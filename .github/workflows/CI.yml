@@ -28,9 +28,12 @@ jobs:
 
         - ansible_version: '2.9'
           python-version: 2.7
+          ansible-lint_version: '==4.*'
 
         - ansible_version: '2.9'
           python-version: 3.5
+          ansible-lint_version: '<5'
+          cryptography_version: '<3.1'
 
         - ansible_version: '2.9'
           python-version: 3.6
@@ -74,14 +77,14 @@ jobs:
 
     defaults:
       run:
-        working-directory: ansible_collections/mafalb/scl
+        working-directory: ansible_collections/mafalb/containerimages
 
     steps:
 
-    - name: checkout collection mafalb.scl
+    - name: checkout collection mafalb.containerimages
       uses: actions/checkout@v2
       with:
-        path: ansible_collections/mafalb/scl
+        path: ansible_collections/mafalb/containerimages
 
     - name: setup python
       uses: actions/setup-python@v2
@@ -128,7 +131,7 @@ jobs:
         . ~/virtualenv/bin/activate
         pip install wheel
         pip install -U pip setuptools
-        pip install "ansible==${{ matrix.ansible_version }}.*" ansible-lint flake8 pylint 'pycodestyle<2.7'
+        pip install "ansible==${{ matrix.ansible_version }}.*" ansible-lint 'cryptography${{ matrix.cryptography_version }}' flake8 pylint 'pycodestyle<2.7'
 
     - name: install ansible for python 3
       if: ${{ matrix.python-version != '2.7' && matrix.ansible_core_version }}
@@ -137,13 +140,14 @@ jobs:
         . ~/virtualenv/bin/activate
         pip install wheel
         pip install -U pip setuptools
-        pip install "ansible-core==${{ matrix.ansible_core_version }}.*" ansible ansible-lint flake8 pylint 'pycodestyle<2.7'
+        pip install "ansible-core==${{ matrix.ansible_core_version }}.*" ansible ansible-lint${{ matrix.ansible-lint_version }} flake8 pylint 'pycodestyle<2.7'
 
     - name: check ansible version
       run: |
         source ~/virtualenv/bin/activate
         ansible --version
         which ansible-test
+        ansible-lint --version
         ansible --version | grep "^ansible.* ${{ matrix.ansible_version }}"
 
     - name: check python version
@@ -154,6 +158,10 @@ jobs:
     - name: lint
       run: |
         source ~/virtualenv/bin/activate
+        if ansible-lint --version|grep "^ansible-lint 4"
+        then
+            ANSIBLE_LINT_VERSION=4
+        fi
         . tests/lint.sh requirements ${{ matrix.python-version }}
 
   CI:
@@ -266,12 +274,13 @@ jobs:
     - name: molecule tests for ansible 2.9
       if: ${{ matrix.ansible_version == '2.9' }}
       run: |
-        sudo -i <<GUGU
-        source ~runner/.virtualenvs/molecule/bin/activate
-        molecule test
-        <<GUGU
+        # buildah connection in 2.9 not possible without root?
+        #
+        sudo --preserve-env=CI_NAME,CI_IMAGE,PY_COLORS,ANSIBLE_FORCE_COLOR \
+          bash tests/molecule.sh ~runner/.virtualenvs/molecule/bin/activate
 
     - name: molecule tests for ansible 2.10+
+      if: ${{ matrix.ansible_version != '2.9' }}
       run: |
         source ~/.virtualenvs/molecule/bin/activate
         molecule test
