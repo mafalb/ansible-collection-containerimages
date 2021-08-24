@@ -349,7 +349,10 @@ class BuildahContainerDiff:
         return self._diff_update_and_compare('blkio_weight_device', before, after)
 
     def diffparam_cap_add(self):
-        before = (self.info['DefaultCapabilities'] + self.info['AddCapabilities'] - self.info['DropCapabilities']) or []
+        before = (self.info['DefaultCapabilities']
+                  + self.info['AddCapabilities']
+                  - self.info['DropCapabilities']
+                  ) or []
         before = [i.lower() for i in before]
         after = []
         if self.module_params['cap_add'] is not None:
@@ -362,7 +365,10 @@ class BuildahContainerDiff:
         return self._diff_update_and_compare('cap_add', before, after)
 
     def diffparam_cap_drop(self):
-        before = (self.info['DefaultCapabilities'] + self.info['AddCapabilities'] - self.info['DropCapabilities']) or []
+        before = (self.info['DefaultCapabilities']
+                  + self.info['AddCapabilities']
+                  - self.info['DropCapabilities']
+                  ) or []
         before = [i.lower() for i in before]
         after = before[:]
         if self.module_params['cap_drop'] is not None:
