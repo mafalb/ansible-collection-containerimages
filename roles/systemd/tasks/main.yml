@@ -56,10 +56,13 @@
     state: absent
   loop: "{{ _unneeded_files_1.files }} + {{ _unneeded_files_2.files }}"
 
+# systemd is not running - mask manually
+#
 - name: units are masked
-  systemd:
-    name: "{{ item }}"
-    masked: true
+  file:
+    src: /dev/null
+    dest: /etc/systemd/system/{{ item }}
+    state: link
   loop: "{{ systemd_masked }}"
   when: systemd_masked is defined
 
