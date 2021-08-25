@@ -50,4 +50,10 @@
     state: absent
   loop: "{{ _unneeded_files_1.files }} + {{ _unneeded_files_2.files }}"
 
+- name: units are masked
+  systemd:
+    name: "{{ item }}"
+    masked: true
+  loop: "{{ systemd_masked }}"
+
 ...
