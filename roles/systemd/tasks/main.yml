@@ -20,6 +20,12 @@
   package:
     name: "{{ packages }}"
 
+- name: unwanted packages are absent
+  package:
+    name: "{{ packages_to_remove }}"
+    state: absent
+  when: packages_to_remove is defined
+
 - name: find unneeded systemd files
   find:
     paths:
