@@ -28,7 +28,7 @@
 
   tasks:
 
-  - name: get failed systemd units
+  - name: get failed systemd units  # noqa: command-instead-of-module
     command: systemctl --state failed --no-legend
     changed_when: false
     register: _failed_units
@@ -37,7 +37,7 @@
     debug:
       var: _failed_units.stdout
 
-  - name: get systemd status
+  - name: get systemd status  # noqa: command-instead-of-module
     command: systemctl is-system-running
     changed_when: false
 
