@@ -55,5 +55,6 @@
     name: "{{ item }}"
     masked: true
   loop: "{{ systemd_masked }}"
+  when: systemd_masked is defined
 
 ...
