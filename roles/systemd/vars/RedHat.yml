@@ -8,4 +8,10 @@ packages:
 - iproute
 - systemd
 
+packages_to_remove:
+- NetworkManager*
+
+systemd_masked:
+- kdump.service
+
 ...

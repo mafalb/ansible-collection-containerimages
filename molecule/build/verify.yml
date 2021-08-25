@@ -89,7 +89,7 @@
 
   - name: the built images are present
     delegate_to: localhost
-    command: docker inspect localhost/{{ ci_name }}-systemd:ci
+    command: docker inspect localhost/systemd/{{ ci_name }}:ci
     changed_when: false
 
 ...

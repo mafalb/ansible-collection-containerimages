@@ -57,7 +57,7 @@ yamllint -s .
 echo "ansible-lint..."
 if test "$ANSIBLE_LINT_VERSION" == 4
 then
-	ansible-lint -v -c .ansible-lint-4
+	ANSIBLE_COLLECTIONS_PATHS=../../.. ansible-lint -v -c .ansible-lint-4
 else
 	ansible-lint -v
 fi

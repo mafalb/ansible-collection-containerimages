@@ -7,4 +7,7 @@ packages:
 - python
 - python-apt
 
+systemd_masked:
+- cgproxy.service
+
 ...

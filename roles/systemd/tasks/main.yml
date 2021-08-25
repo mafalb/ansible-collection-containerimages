@@ -20,6 +20,12 @@
   package:
     name: "{{ packages }}"
 
+- name: unwanted packages are absent
+  package:
+    name: "{{ packages_to_remove }}"
+    state: absent
+  when: packages_to_remove is defined
+
 - name: find unneeded systemd files
   find:
     paths:
@@ -49,5 +55,15 @@
     path: "{{ item.path }}"
     state: absent
   loop: "{{ _unneeded_files_1.files }} + {{ _unneeded_files_2.files }}"
+
+# systemd is not running - mask manually
+#
+- name: units are masked
+  file:
+    src: /dev/null
+    dest: /etc/systemd/system/{{ item }}
+    state: link
+  loop: "{{ systemd_masked }}"
+  when: systemd_masked is defined
 
 ...

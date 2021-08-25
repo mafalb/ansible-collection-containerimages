@@ -277,12 +277,26 @@ jobs:
         # buildah connection in 2.9 not possible without root?
         #
         sudo --preserve-env=CI_NAME,CI_IMAGE,PY_COLORS,ANSIBLE_FORCE_COLOR \
-          bash tests/molecule.sh ~runner/.virtualenvs/molecule/bin/activate
+          bash tests/molecule.sh ~runner/.virtualenvs/molecule/bin/activate build
 
-    - name: molecule tests for ansible 2.10+
+    - name: molecule tests for ansible 2.9
+      if: ${{ matrix.ansible_version == '2.9' }}
+      run: |
+        # buildah connection in 2.9 not possible without root?
+        #
+        sudo --preserve-env=CI_NAME,CI_IMAGE,PY_COLORS,ANSIBLE_FORCE_COLOR \
+          bash tests/molecule.sh ~runner/.virtualenvs/molecule/bin/activate verify
+
+    - name: build for ansible 2.10+
       if: ${{ matrix.ansible_version != '2.9' }}
       run: |
         source ~/.virtualenvs/molecule/bin/activate
-        molecule test
+        molecule test -s build
+
+    - name: verify for ansible 2.10+
+      if: ${{ matrix.ansible_version != '2.9' }}
+      run: |
+        source ~/.virtualenvs/molecule/bin/activate
+        molecule test -s verify
 
 ...
