@@ -5,8 +5,8 @@ driver:
   name: docker
 
 platforms:
-- name: ci-${CI_NAME-ci-rocky8}
-  image: ${CI_IMAGE:-localhost/systemd/rocky8}
+- name: ci-${CI_NAME:-rocky8}
+  image: localhost/systemd/${CI_NAME:-rocky8}:ci
   command: /lib/systemd/systemd
   volumes:
   - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
