@@ -8,4 +8,7 @@ packages:
 - iproute
 - systemd
 
+systemd_masked:
+- kdump.service
+
 ...
