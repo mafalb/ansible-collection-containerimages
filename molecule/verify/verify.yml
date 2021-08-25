@@ -28,6 +28,10 @@
 
   tasks:
 
+  - name: check rpm db
+    command: rpm -qa
+    changed_when: false
+
   - name: get failed systemd units  # noqa: command-instead-of-module 303
     command: systemctl --state failed --no-legend
     changed_when: false
