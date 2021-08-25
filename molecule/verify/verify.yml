@@ -1,0 +1,49 @@
+# vim: set ft=yaml ts=2 expandtab:
+
+# This file is part of Ansible collection mafalb.containerimages
+# Copyright (c) 2021 Markus Falb <markus.falb@mafalb.at>
+#
+# Ansible collection mafalb.containerimages is free software: you can
+# redistribute it and/or modify it under the terms of the GNU General
+# Public License as published by the Free Software Foundation, either
+# version 3 of the License, or (at your option) any later version.
+#
+# Ansible collection mafalb.containerimages is distributed in the hope that it
+# will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Ansible collection mafalb.containerimages.
+# If not, see <https://www.gnu.org/licenses/>.
+
+---
+
+- name: Verify
+  hosts: ci_group
+
+  module_defaults:
+    shell:
+      executable: /bin/bash
+
+  tasks:
+
+  - name: get failed systemd units
+    command: systemctl --state failed --no-legend
+    changed_when: false
+    register: _failed_units
+
+  - name: output failed systemd units
+    debug:
+      var: _failed_units.stdout
+
+  - name: get systemd status
+    command: systemctl is-system-running
+    changed_when: false
+
+  - name: ensure that systemd is running properly
+    assert:
+      that:
+      - _failed_units.stdout_lines|length == 0
+
+...

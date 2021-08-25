@@ -27,6 +27,6 @@
 
   - name: commit  # noqa: no-changed-when 301
     delegate_to: localhost
-    command: buildah commit {{ inventory_hostname }} docker-daemon:localhost/{{ ci_name }}-systemd:ci
+    command: buildah commit {{ inventory_hostname }} docker-daemon:localhost/systemd/{{ ci_name }}:ci
 
 ...
