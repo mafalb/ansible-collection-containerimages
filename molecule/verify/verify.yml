@@ -28,10 +28,20 @@
 
   tasks:
 
-  - name: check rpm db
+  - name: check rpm db  # noqa: command-instead-of-module 303
     command: rpm -qa
     changed_when: false
     when: ansible_pkg_mgr in ['dnf', 'yum']
+
+  - name: check dpkg db  # noqa: command-instead-of-module 303
+    command: dpkg -l
+    changed_when: false
+    when: ansible_pkg_mgr == 'apt'
+
+  - name: check pacman db  # noqa: command-instead-of-module 303
+    command: pacman -Q
+    changed_when: false
+    when: ansible_pkg_mgr == 'pacman'
 
   - name: get failed systemd units  # noqa: command-instead-of-module 303
     command: systemctl --state failed --no-legend
