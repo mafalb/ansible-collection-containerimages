@@ -244,8 +244,6 @@ jobs:
       ANSIBLE_VERSION: ${{ matrix.ansible_version }}
       CI_IMAGE: ${{ matrix.image }}
       CI_NAME: ${{ matrix.target }}
-      CI_URI: ${{ GITHUB_SERVER_URL }}/${{ GITHUB_REPOSITORY }}
-      CI_REVISION: ${{ env.GITHUB_SHA }}
       PY_COLORS: 1
       ANSIBLE_FORCE_COLOR: 1
 
@@ -292,6 +290,9 @@ jobs:
     - name: build for ansible 2.10+
       if: ${{ matrix.ansible_version != '2.9' }}
       run: |
+        CI_URI=${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}
+        CI_REVISION=${{ env.GITHUB_SHA }}
+        export CI_URI CI_REVISION
         source ~/.virtualenvs/molecule/bin/activate
         molecule test -s build
 
