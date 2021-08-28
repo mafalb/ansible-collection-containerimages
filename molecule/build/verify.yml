@@ -94,7 +94,7 @@
 
   - name: get image data
     podman_image_info:
-      name: docker-daemon:localhost/systemd/{{ ci_name }}:ci
+      name: localhost/systemd/{{ ci_name }}:ci
     delegate_to: localhost
     register: _base_image_data
 
