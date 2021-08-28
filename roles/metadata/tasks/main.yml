@@ -1,0 +1,52 @@
+# vim: set ft=yaml ts=2 expandtab:
+---
+
+- name: assertions
+  assert:
+    that:
+    - ci_name|length > 0
+    - ci_image|length > 0
+    - image_name is defined
+    - image_author is defined
+    - source_uri is defined
+    - source_sha is defined
+
+- name: set image configuration  # noqa: no-changed-when 301
+  command: "{{ item }}"
+  delegate_to: localhost
+  loop:
+  - buildah config --cmd /lib/systemd/systemd {{ inventory_hostname }}
+  - buildah config --stop-signal SIGRTMIN+3 {{ inventory_hostname }}
+  - buildah config --author "{{ image_author }}" {{ inventory_hostname }}
+  - buildah config --env container=docker {{ inventory_hostname }}
+  - buildah config --volume /sys/fs/cgroup {{ inventory_hostname }}
+
+- name: get image data
+  delegate_to: localhost
+  podman_image_info:
+    name: docker-daemon:{{ ci_image }}
+  register: _base_image_data
+
+- name: debug
+  debug:
+    var: _base_image_data.images[0].Id
+
+- name: set image configuration  # noqa: no-changed-when 301
+  command: "{{ item }}"
+  delegate_to: localhost
+  loop:
+  - buildah config --label org.opencontainers.image.base.digest={{ _base_image_data.images[0].Id }} {{ inventory_hostname }}
+  - buildah config --label org.opencontainers.image.base.name={{ ci_image }} {{ inventory_hostname }}
+  - buildah config --label org.opencontainers.image.source='{{ source_uri }}' {{ inventory_hostname }}
+  - buildah config --label org.opencontainers.image.revision='{{ source_sha }}' {{ inventory_hostname }}
+  - buildah config --label org.opencontainers.image.title='{{ image_name }}' {{ inventory_hostname }}
+  - buildah config --label org.opencontainers.image.vendor='{{ image_author }}' {{ inventory_hostname }}
+  - buildah config --label org.opencontainers.image.created='{{ ansible_date_time.iso8601 }}' {{ inventory_hostname }}
+
+
+  - buildah config --label org.label-schema.build-date='{{ ansible_date_time.iso8601 }}' {{ inventory_hostname }}
+  - buildah config --label org.label-schema.name='{{ image_name }}' {{ inventory_hostname }}
+  - buildah config --label org.label-schema.schema-version='1.0' {{ inventory_hostname }}
+  - buildah config --label org.label-schema.vendor='{{ image_author }}' {{ inventory_hostname }}
+
+...

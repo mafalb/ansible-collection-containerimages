@@ -244,6 +244,8 @@ jobs:
       ANSIBLE_VERSION: ${{ matrix.ansible_version }}
       CI_IMAGE: ${{ matrix.image }}
       CI_NAME: ${{ matrix.target }}
+      CI_URI: ${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}
+      CI_REVISION: ${{ env.GITHUB_SHA }}
       PY_COLORS: 1
       ANSIBLE_FORCE_COLOR: 1
 

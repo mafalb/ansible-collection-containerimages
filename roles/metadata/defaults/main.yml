@@ -1,0 +1,11 @@
+# vim: set ft=yaml ts=2 expandtab:
+---
+
+image_name: "{{ ansible_distribution }} {{ ansible_distribution_major_version }} Systemd Image"
+
+# define defaults for local runs of CI
+#
+source_uri: "{{ lookup('env', 'CI_URI') if lookup('env', 'CI_URI') != '' else 'https://example.com/' }}"
+source_sha: "{{ lookup('env', 'CI_REVISION') if lookup('env', 'CI_REVISION') != '' else '0' }}"
+
+...
