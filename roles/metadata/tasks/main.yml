@@ -24,7 +24,7 @@
 - name: get image data
   delegate_to: localhost
   podman_image_info:
-    name: docker-daemon:{{ ci_image }}
+    name: "{{ ci_image }}"
   register: _base_image_data
 
 - name: debug

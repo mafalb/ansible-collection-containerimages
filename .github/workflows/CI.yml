@@ -279,7 +279,7 @@ jobs:
         export CI_URI CI_REVISION
         # buildah connection in 2.9 not possible without root?
         #
-        sudo --preserve-env=CI_NAME,CI_IMAGE,PY_COLORS,ANSIBLE_FORCE_COLOR \
+        sudo --preserve-env=CI_NAME,CI_IMAGE,PY_COLORS,ANSIBLE_FORCE_COLOR,CI_URI,CI_REVISION \
           bash tests/molecule.sh ~runner/.virtualenvs/molecule/bin/activate build
 
     - name: molecule tests for ansible 2.9
@@ -290,7 +290,7 @@ jobs:
         export CI_URI CI_REVISION
         # buildah connection in 2.9 not possible without root?
         #
-        sudo --preserve-env=CI_NAME,CI_IMAGE,PY_COLORS,ANSIBLE_FORCE_COLOR \
+        sudo --preserve-env=CI_NAME,CI_IMAGE,PY_COLORS,ANSIBLE_FORCE_COLOR,CI_URI,CI_REVISION \
           bash tests/molecule.sh ~runner/.virtualenvs/molecule/bin/activate verify
 
     - name: build for ansible 2.10+
