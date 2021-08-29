@@ -96,19 +96,19 @@
     podman_image_info:
       name: localhost/systemd/{{ ci_name }}:ci
     delegate_to: localhost
-    register: _base_image_data
+    register: _image_data
 
   - name: debug
     debug:
-      var: _base_image_data.images
+      var: _image_data
 
   - name: check metadata
     assert:
       that:
-      - _base_image_data.images[0].Labels['org.opencontainers.image.licenses'] is defined
-      - _base_image_data.images[0].Labels['org.opencontainers.image.revision'] is defined
-      - _base_image_data.images[0].Labels['org.opencontainers.image.revision'] != '0'
-      - _base_image_data.images[0].Labels['org.opencontainers.image.source'] is defined
-      - _base_image_data.images[0].Labels['org.opencontainers.image.source'] != 'https://example.com/'
+      - _image_data.images[0].Labels['org.opencontainers.image.licenses'] is defined
+      - _image_data.images[0].Labels['org.opencontainers.image.revision'] is defined
+      - _image_data.images[0].Labels['org.opencontainers.image.revision'] != '0'
+      - _image_data.images[0].Labels['org.opencontainers.image.source'] is defined
+      - _image_data.images[0].Labels['org.opencontainers.image.source'] != 'https://example.com/'
 
 ...
