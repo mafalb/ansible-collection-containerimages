@@ -2,5 +2,6 @@
 ---
 
 mafalb_containerimages_systemd_state: present
+image_name: "{{ ansible_distribution }} {{ ansible_distribution_major_version }} Systemd Image"
 
 ...

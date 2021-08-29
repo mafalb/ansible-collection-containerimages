@@ -8,25 +8,14 @@
     ci_image: "{{ lookup('env','CI_IMAGE') }}"
   roles:
   - role: mafalb.containerimages.cleanup
-
+  - role: mafalb.containerimages.metadata
+    image_author: Markus Falb
   tasks:
-  - name: assert that ci_name is set
-    assert:
-      that:
-      - ci_name|length > 0
-
-  - name: set image configuration  # noqa: no-changed-when 301
-    command: "{{ item }}"
+  - name: commit to docker storage  # noqa: no-changed-when 301
     delegate_to: localhost
-    loop:
-    - buildah config --cmd /lib/systemd/systemd {{ inventory_hostname }}
-    - buildah config --stop-signal SIGRTMIN+3 {{ inventory_hostname }}
-    - buildah config --author "Markus Falb <markus.falb@mafalb.at>" {{ inventory_hostname }}
-    - buildah config --env container=docker {{ inventory_hostname }}
-    - buildah config --volume /sys/fs/cgroup {{ inventory_hostname }}
-
-  - name: commit  # noqa: no-changed-when 301
+    command: buildah commit {{ inventory_hostname }} localhost/systemd/{{ ci_name }}:ci
+  - name: push the image into docker storage  # noqa: no-changed-when 301
     delegate_to: localhost
-    command: buildah commit {{ inventory_hostname }} docker-daemon:localhost/systemd/{{ ci_name }}:ci
+    command: podman push localhost/systemd/{{ ci_name }}:ci docker-daemon:localhost/systemd/{{ ci_name }}:ci
 
 ...

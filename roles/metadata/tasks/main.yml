@@ -1,0 +1,79 @@
+# vim: set ft=yaml ts=2 expandtab:
+---
+
+- name: generate timestamp
+  debug:
+    msg: "{{ ansible_date_time.iso8601 }}"
+  register: now
+
+- name: debug
+  debug:
+    var: now
+
+- name: assertions
+  assert:
+    that:
+    - ci_name|length > 0
+    - ci_image|length > 0
+    - image_name is defined
+    - image_author is defined
+    - source_uri is defined
+    - source_sha is defined
+    - now is defined
+
+- name: set image configuration  # noqa: no-changed-when 301
+  command: "{{ item }}"
+  delegate_to: localhost
+  loop:
+  - buildah config --cmd /lib/systemd/systemd {{ inventory_hostname }}
+  - buildah config --stop-signal SIGRTMIN+3 {{ inventory_hostname }}
+  - buildah config --author "{{ image_author }}" {{ inventory_hostname }}
+  - buildah config --env container=docker {{ inventory_hostname }}
+  - buildah config --volume /sys/fs/cgroup {{ inventory_hostname }}
+
+- name: get image data
+  delegate_to: localhost
+  podman_image_info:
+    name: "{{ ci_image }}"
+  register: _base_image_data
+
+- name: debug
+  debug:
+    var: _base_image_data.images[0].Id
+
+- name: preserve license information  # noqa: no-changed-when 301
+  command: "{{ item }}"
+  delegate_to: localhost
+  loop:
+  - buildah config --label org.opencontainers.image.licenses='{{ _base_image_data.images[0].Labels['org.label-schema.license'] }}' {{ inventory_hostname }}
+  when:
+  - _base_image_data.images[0].Labels['org.label-schema.name'] is defined
+
+- name: preserve license information  # noqa: no-changed-when 301
+  command: "{{ item }}"
+  delegate_to: localhost
+  loop:
+  - buildah config --label org.opencontainers.image.licenses='{{ _base_image_data.images[0].Labels['license'] }}' {{ inventory_hostname }}
+  when:
+  - _base_image_data.images[0].Labels['license'] is defined
+
+- name: remove all org.label.schema. labels
+  command: buildah config --label {{ item['key'] }}- {{ inventory_hostname }}
+  loop: "{{ ( {} if _base_image_data.images[0].Labels == None else _base_image_data.images[0].Labels)|default({})|dict2items }}"
+  delegate_to: localhost
+  when:
+  - item['key'] is match('org.label.schema.')
+
+- name: set image configuration  # noqa: no-changed-when 301
+  command: "{{ item }}"
+  delegate_to: localhost
+  loop:
+  - buildah config --label org.opencontainers.image.base.digest={{ _base_image_data.images[0].Id }} {{ inventory_hostname }}
+  - buildah config --label org.opencontainers.image.base.name={{ ci_image }} {{ inventory_hostname }}
+  - buildah config --label org.opencontainers.image.source='{{ source_uri }}' {{ inventory_hostname }}
+  - buildah config --label org.opencontainers.image.revision='{{ source_sha }}' {{ inventory_hostname }}
+  - buildah config --label org.opencontainers.image.title='{{ image_name }}' {{ inventory_hostname }}
+  - buildah config --label org.opencontainers.image.vendor='{{ image_author }}' {{ inventory_hostname }}
+  - buildah config --label org.opencontainers.image.created='{{ now.msg }}' {{ inventory_hostname }}
+
+...

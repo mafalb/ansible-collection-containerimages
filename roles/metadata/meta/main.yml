@@ -1,0 +1,37 @@
+# vim: set ft=yaml ts=2 expandtab:
+---
+
+galaxy_info:
+  author: Markus Falb <markus.falb@mafalb.at>
+  description: Ansible role mafalb.containerimages.metadata
+  license: GPL-3.0-or-later
+  min_ansible_version: 2.9
+
+  # https://galaxy.ansible.com/api/v1/platforms/
+  #
+  platforms:
+  - name: EL
+    versions:
+    - 7
+    - 8
+  - name: Fedora
+    versions:
+    - 33
+    - 34
+  - name: Ubuntu
+    versions:
+    - xenial
+    - bionic
+    - focal
+  - name: Debian
+    versions:
+    - stretch
+    - buster
+    - bullseye
+
+  galaxy_tags:
+  - buildah
+
+dependencies: []
+
+...
