@@ -47,11 +47,17 @@
   when:
   - _base_image_data.images[0].Labels['license'] is defined
 
+- name: debug
+  debug: var=_base_image_data.images[0].Labels
+
+- debug: var=_base_image_data.images[0].Labels|default({})
+
 - name: remove all org.label.schema. labels
   command: buildah config --label {{ item['key'] }}- {{ inventory_hostname }}
-  loop: "{{ lookup('dict', _base_image_data.images[0].Labels)|default({}) }}"
+  loop: "{{ _base_image_data.images[0].Labels|default({})|combine({})|dict2items }}"
   delegate_to: localhost
-  when: item['key'] is match('org.label.schema.')
+  when:
+  - item['key'] is match('org.label.schema.')
 
 - name: set image configuration  # noqa: no-changed-when 301
   command: "{{ item }}"
