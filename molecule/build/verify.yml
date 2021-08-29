@@ -112,23 +112,22 @@
     debug:
       var: _image_data
 
-  - name: check metadata
-    assert:
-      that:
-      - _image_data.images[0].Labels['org.opencontainers.image.licenses'] is defined
-      - _image_data.images[0].Labels['org.opencontainers.image.revision'] is defined
-      - _image_data.images[0].Labels['org.opencontainers.image.revision'] != '0'
-      - _image_data.images[0].Labels['org.opencontainers.image.source'] is defined
-      - _image_data.images[0].Labels['org.opencontainers.image.source'] != '/'
-      - _image_data.images[0].Labels['org.opencontainers.image.source'] is match('https://')
-
   - name: check license
     assert:
       that:
       - _image_data.images[0].Labels['org.opencontainers.image.licenses'] is defined
     when:
     - _base_image_data.images[0].Labels['org.opencontainers.image.licenses'] is defined
-      or _base_image_data.images[0].Labels['org.label.schema.license'] is defined
+      or _base_image_data.images[0].Labels['org.label-schema.license'] is defined
       or _base_image_data.images[0].Labels['license'] is defined
+
+  - name: check metadata
+    assert:
+      that:
+      - _image_data.images[0].Labels['org.opencontainers.image.revision'] is defined
+      - _image_data.images[0].Labels['org.opencontainers.image.revision'] != '0'
+      - _image_data.images[0].Labels['org.opencontainers.image.source'] is defined
+      - _image_data.images[0].Labels['org.opencontainers.image.source'] != '/'
+      - _image_data.images[0].Labels['org.opencontainers.image.source'] is match('https://')
 
 ...
