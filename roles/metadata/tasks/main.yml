@@ -1,6 +1,11 @@
 # vim: set ft=yaml ts=2 expandtab:
 ---
 
+- name: generate timestamp
+  debug:
+    msg: "{{ ansible_date_time.iso8601 }}"
+  register: now
+
 - name: assertions
   assert:
     that:
@@ -10,6 +15,7 @@
     - image_author is defined
     - source_uri is defined
     - source_sha is defined
+    - now is defined
 
 - name: set image configuration  # noqa: no-changed-when 301
   command: "{{ item }}"
@@ -64,6 +70,6 @@
   - buildah config --label org.opencontainers.image.revision='{{ source_sha }}' {{ inventory_hostname }}
   - buildah config --label org.opencontainers.image.title='{{ image_name }}' {{ inventory_hostname }}
   - buildah config --label org.opencontainers.image.vendor='{{ image_author }}' {{ inventory_hostname }}
-  - buildah config --label org.opencontainers.image.created='{{ ansible_date_time.iso8601 }}' {{ inventory_hostname }}
+  - buildah config --label org.opencontainers.image.created='{{ now.stdout }}' {{ inventory_hostname }}
 
 ...
