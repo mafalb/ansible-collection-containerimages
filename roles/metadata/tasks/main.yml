@@ -6,6 +6,10 @@
     msg: "{{ ansible_date_time.iso8601 }}"
   register: now
 
+- name: debug
+  debug:
+    var: now
+
 - name: assertions
   assert:
     that:
@@ -70,6 +74,6 @@
   - buildah config --label org.opencontainers.image.revision='{{ source_sha }}' {{ inventory_hostname }}
   - buildah config --label org.opencontainers.image.title='{{ image_name }}' {{ inventory_hostname }}
   - buildah config --label org.opencontainers.image.vendor='{{ image_author }}' {{ inventory_hostname }}
-  - buildah config --label org.opencontainers.image.created='{{ now.stdout }}' {{ inventory_hostname }}
+  - buildah config --label org.opencontainers.image.created='{{ now.msg }}' {{ inventory_hostname }}
 
 ...
