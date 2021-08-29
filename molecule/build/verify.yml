@@ -109,7 +109,7 @@
       - _image_data.images[0].Labels['org.opencontainers.image.revision'] is defined
       - _image_data.images[0].Labels['org.opencontainers.image.revision'] != '0'
       - _image_data.images[0].Labels['org.opencontainers.image.source'] is defined
-      - _image_data.images[0].Labels['org.opencontainers.image.source'] != 'https://example.com/'
       - _image_data.images[0].Labels['org.opencontainers.image.source'] != '/'
+      - _image_data.images[0].Labels['org.opencontainers.image.source'] is match('https://')
 
 ...
