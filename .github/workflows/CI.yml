@@ -274,8 +274,8 @@ jobs:
     - name: molecule tests for ansible 2.9
       if: ${{ matrix.ansible_version == '2.9' }}
       run: |
-        CI_URI=${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}
-        CI_REVISION=${{ env.GITHUB_SHA }}
+        CI_URI=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY
+        CI_REVISION=$GITHUB_SHA
         export CI_URI CI_REVISION
         # buildah connection in 2.9 not possible without root?
         #
@@ -285,8 +285,8 @@ jobs:
     - name: molecule tests for ansible 2.9
       if: ${{ matrix.ansible_version == '2.9' }}
       run: |
-        CI_URI=${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}
-        CI_REVISION=${{ env.GITHUB_SHA }}
+        CI_URI=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY
+        CI_REVISION=$GITHUB_SHA
         export CI_URI CI_REVISION
         # buildah connection in 2.9 not possible without root?
         #
@@ -296,8 +296,8 @@ jobs:
     - name: build for ansible 2.10+
       if: ${{ matrix.ansible_version != '2.9' }}
       run: |
-        CI_URI=${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}
-        CI_REVISION=${{ env.GITHUB_SHA }}
+        CI_URI=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY
+        CI_REVISION=$GITHUB_SHA
         export CI_URI CI_REVISION
         source ~/.virtualenvs/molecule/bin/activate
         molecule test -s build
