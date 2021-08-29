@@ -127,7 +127,7 @@
       that:
       - _image_data.images[0].Labels['org.opencontainers.image.licenses'] is defined
     when:
-    -    _base_image_data.images[0].Labels['org.opencontainers.image.licenses'] is defined
+    - _base_image_data.images[0].Labels['org.opencontainers.image.licenses'] is defined
       or _base_image_data.images[0].Labels['org.label.schema.license'] is defined
       or _base_image_data.images[0].Labels['license'] is defined
 
