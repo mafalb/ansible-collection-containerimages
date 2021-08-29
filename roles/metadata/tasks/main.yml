@@ -49,7 +49,7 @@
 
 - name: remove all org.label.schema. labels
   command: buildah config --label {{ item['key'] }}- {{ inventory_hostname }}
-  loop: "{{ _base_image_data.images[0].Labels|default({})|combine({})|dict2items }}"
+  loop: "{{ ( {} if _base_image_data.images[0].Labels == None else _base_image_data.images[0].Labels)|default({})|dict2items }}"
   delegate_to: localhost
   when:
   - item['key'] is match('org.label.schema.')
