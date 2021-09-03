@@ -4,7 +4,7 @@
 dependency:
   name: galaxy
   options:
-    requirements-file: molecule/default/requirements.yml
+    requirements-file: requirements.yml
 
 driver:
   name: delegated
