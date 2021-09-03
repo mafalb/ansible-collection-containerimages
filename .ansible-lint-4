@@ -1,7 +1,5 @@
 # older ansible-lint can't do custom modules in collections
 #
 exclude_paths:
-- molecule/default/create.yml
-- molecule/default/destroy.yml
-- playbooks/create.yml
-- playbooks/remove.yml
+- molecule/build/create.yml
+- molecule/build/destroy.yml
