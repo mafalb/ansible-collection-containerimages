@@ -2,6 +2,7 @@
 ---
 
 collections:
-- name: mafalb.containers
+- name: https://github.com/mafalb/ansible-collection-containers
+  type: git
 
 ...
