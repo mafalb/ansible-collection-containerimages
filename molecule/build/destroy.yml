@@ -22,7 +22,7 @@
     register: running_buildahs
 
   - name: instances are destroyed
-    mafalb.container.buildah_container:
+    mafalb.containers.buildah_container:
       name: "{{ item.name }}"
       state: absent
     loop: "{{ molecule_yml.platforms }}"
