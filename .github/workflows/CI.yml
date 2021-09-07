@@ -10,7 +10,8 @@ on:  # yamllint disable-line rule:truthy
     - '**'
     tags-ignore:
     - '*'
-
+  pull_request:
+  pull_request_review:
   schedule:
     - cron: '40 11 * * 6'
 
@@ -18,7 +19,11 @@ jobs:
 
   SANITY:
 
+    # don't run on pull request from ourselves
+    #     #
+    #         if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
     runs-on: ubuntu-20.04
+
     strategy:
       fail-fast: false
 
@@ -165,6 +170,10 @@ jobs:
         . tests/lint.sh requirements ${{ matrix.python-version }}
 
   CI:
+
+    # don't run on pull request from ourselves
+    #
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
 
     runs-on: ubuntu-20.04
 
