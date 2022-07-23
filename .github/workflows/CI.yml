@@ -34,7 +34,6 @@ jobs:
 
       CI_NAME: ${{ matrix.os }}
       CI_IMAGE: "ghcr.io/${{ github.repository_owner }}/${{ matrix.os }}.${{ matrix.flavor }}:latest"
-      CI_REGISTRY: ghcr.io"
       PY_COLORS: 1
       ANSIBLE_FORCE_COLOR: 1
 
@@ -42,7 +41,7 @@ jobs:
 
       - name: pull container image
         run: |
-          podman login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} $CI_REGISTRY
+          podman login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
           podman pull $CI_IMAGE
 
       - name: checkout collection mafalb.containerimages
