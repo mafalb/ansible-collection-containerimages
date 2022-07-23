@@ -1,0 +1,12 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: podman
+platforms:
+  - name: ci
+    image: ${CI_IMAGE}
+provisioner:
+  name: ansible
+verifier:
+  name: ansible

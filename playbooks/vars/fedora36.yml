@@ -1,0 +1,18 @@
+# Copyright (c) 2021,2022 Markus Falb <markus.falb@mafalb.at>
+# GNU General Public License v3.0+
+# see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
+---
+
+_ansible_bender: 
+  base_image: registry.fedoraproject.org/fedora:36
+  target_image:
+    name: localhost/mafalb/fedora36
+    labels:
+      'org.opencontainers.image.created': '2022-07-16T18:26:15Z'
+      "name": "Fedora"
+      "license": "MIT"
+      "vendor": "Markus Falb"
+      "version": "36"
+  layering: false
+
+...
