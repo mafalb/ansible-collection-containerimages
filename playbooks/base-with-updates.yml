@@ -6,9 +6,9 @@
 - name: converge containerimages
   hosts: all
   vars_files:
-    - "{{ lookup('env','OS')|mandatory }}.yml"
+    - ansible_bender.yml
   vars:
-    ansible_bender: "{{ _ansible_bender }}"
+    ansible_bender: "{{ _ansible_bender[lookup('ansible.builtin.env','OS', default=Undefined) + '-base'] }}"
   tasks:
     - name: all packages are updated
       package:
@@ -16,5 +16,6 @@
         state: latest
     - name: clean the cache
       command: yum clean all
+      changed_when: false
 
 ...

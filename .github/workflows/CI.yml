@@ -27,19 +27,23 @@ jobs:
           - fedora36
 
         flavor:
-          - updates
+          - base
           - systemd
 
     env:
-
       CI_NAME: ${{ matrix.os }}
       CI_IMAGE: "ghcr.io/${{ github.repository_owner }}/${{ matrix.os }}.${{ matrix.flavor }}:latest"
+      CI_CONTAINER: "${{ matrix.os }}-${{ matrix.flavor }}"
       PY_COLORS: 1
       ANSIBLE_FORCE_COLOR: 1
 
+    defaults:
+      run:
+        working-directory: ansible_collections/mafalb/containerimages
+
     steps:
 
-      - name: pull container image
+      - name: pull container images
         run: |
           podman login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
           podman pull $CI_IMAGE
@@ -58,35 +62,4 @@ jobs:
           source ~/.virtualenvs/ci-tools/bin/activate
           molecule test
 
-  BUILD:
-
-    # the image is not up to date
-    if: failure()
-
-    runs-on: ubuntu-20.04
-    strategy:
-      fail-fast: false
-
-      matrix:
-
-        target:
-          - centos7
-          - fedora36
-
-    steps:
-
-      - name: checkout collection mafalb.containerimages
-        uses: actions/checkout@v2
-        with:
-          path: ansible_collections/mafalb/containerimages
-
-
-      - name: install necessary tools
-        run: |
-          make tools
-
-      - name: check for updates
-        run: |
-          source ~/.virtualenvs/ci-tools/bin/activate
-          molecule test
 ...

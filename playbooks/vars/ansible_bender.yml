@@ -5,29 +5,46 @@
 
 _ansible_bender:
 
-  centos7:
-    base_image: quay.io/centos/centos:centos7
+  centos7-base:
+    layering: false
     target_image:
-      name: localhost/mafalb/centos7
       labels:
         'org.opencontainers.image.title': 'CentOS 7 Base Image plus updates'
         'org.label-schema.name': 'CentOS 7 Base Image plus updates'
         'org.opencontainers.image.vendor': 'Markus Falb'
         'org.label-schema.vendor': 'Markus Falb'
-        'org.label-schema.build-date': "20220716"
-        'org.opencontainers.image.created': '2022-07-16T18:26:15Z'
-    layering: false
+#        'org.label-schema.build-date': "{{ ansible_date_time.year }}{{ ansible_date_time.month }}{{ ansible_date_time.day }}"
+#        'org.opencontainers.image.created': "{{ ansible_date_time.iso8601 }}"
 
-  fedora36:
-    base_image: registry.fedoraproject.org/fedora:36
+  centos7-systemd:
+    layering: false
     target_image:
-      name: localhost/mafalb/fedora36
       labels:
-        'org.opencontainers.image.created': '2022-07-16T18:26:15Z'
+        'org.opencontainers.image.title': 'CentOS 7 Systemd Image'
+        'org.label-schema.name': 'CentOS 7 Systemd Image'
+        'org.opencontainers.image.vendor': 'Markus Falb'
+        'org.label-schema.vendor': 'Markus Falb'
+#        'org.label-schema.build-date': "{{ ansible_date_time.year }}{{ ansible_date_time.month }}{{ ansible_date_time.day }}"
+#        'org.opencontainers.image.created': "{{ ansible_date_time.iso8601 }}"
+
+  fedora36-base:
+    layering: false
+    target_image:
+      labels:
+#        'org.opencontainers.image.created': "{{ ansible_date_time.iso8601 }}"
         "name": "Fedora"
         "license": "MIT"
         "vendor": "Markus Falb"
         "version": "36"
+
+  fedora36-systemd:
     layering: false
+    target_image:
+      labels:
+#        'org.opencontainers.image.created': "{{ ansible_date_time.iso8601 }}"
+        "name": "Fedora with Systemd"
+        "license": "MIT"
+        "vendor": "Markus Falb"
+        "version": "36"
 
 ...
