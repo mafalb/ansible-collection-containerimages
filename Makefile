@@ -20,4 +20,4 @@ tools:
 	mkdir -p ~/.virtualenvs/ci-tools
 	python3 -m venv ~/.virtualenvs/ci-tools
 	. ~/.virtualenvs/ci-tools/bin/activate
-	pip install ansible-bender molecule molecule-podman
+	pip install ansible-bender molecule molecule-podman ansible-core
