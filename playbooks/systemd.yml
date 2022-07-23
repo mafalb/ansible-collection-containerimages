@@ -1,0 +1,16 @@
+# Copyright (c) 2021,2022 Markus Falb <markus.falb@mafalb.at>
+# GNU General Public License v3.0+
+# see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
+---
+
+  
+- name: converge containerimages
+  hosts: all
+  vars_files:
+    - ansible_bender.yml
+  vars:
+    ansible_bender: "{{ _ansible_bender[lookup('ansible.builtin.env','OS', default=Undefined) + '-systemd'] }}"
+  roles:
+    - role: mafalb.containerimages.systemd
+
+...

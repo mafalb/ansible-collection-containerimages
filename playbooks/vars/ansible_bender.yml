@@ -1,0 +1,50 @@
+# Copyright (c) 2021,2022 Markus Falb <markus.falb@mafalb.at>
+# GNU General Public License v3.0+
+# see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
+---
+
+_ansible_bender:
+
+  centos7-base:
+    layering: false
+    target_image:
+      labels:
+        'org.opencontainers.image.title': 'CentOS 7 Base Image plus updates'
+        'org.label-schema.name': 'CentOS 7 Base Image plus updates'
+        'org.opencontainers.image.vendor': 'Markus Falb'
+        'org.label-schema.vendor': 'Markus Falb'
+#        'org.label-schema.build-date': "{{ ansible_date_time.year }}{{ ansible_date_time.month }}{{ ansible_date_time.day }}"
+#        'org.opencontainers.image.created': "{{ ansible_date_time.iso8601 }}"
+
+  centos7-systemd:
+    layering: false
+    target_image:
+      labels:
+        'org.opencontainers.image.title': 'CentOS 7 Systemd Image'
+        'org.label-schema.name': 'CentOS 7 Systemd Image'
+        'org.opencontainers.image.vendor': 'Markus Falb'
+        'org.label-schema.vendor': 'Markus Falb'
+#        'org.label-schema.build-date': "{{ ansible_date_time.year }}{{ ansible_date_time.month }}{{ ansible_date_time.day }}"
+#        'org.opencontainers.image.created': "{{ ansible_date_time.iso8601 }}"
+
+  fedora36-base:
+    layering: false
+    target_image:
+      labels:
+#        'org.opencontainers.image.created': "{{ ansible_date_time.iso8601 }}"
+        "name": "Fedora"
+        "license": "MIT"
+        "vendor": "Markus Falb"
+        "version": "36"
+
+  fedora36-systemd:
+    layering: false
+    target_image:
+      labels:
+#        'org.opencontainers.image.created': "{{ ansible_date_time.iso8601 }}"
+        "name": "Fedora with Systemd"
+        "license": "MIT"
+        "vendor": "Markus Falb"
+        "version": "36"
+
+...

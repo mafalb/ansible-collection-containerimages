@@ -1,34 +1,16 @@
 # vim: set ft=yaml ts=2 expandtab:
 ---
 
-name: CI
+name: BUILD
 
 on:  # yamllint disable-line rule:truthy
-
   workflow_dispatch:
-  push:
-    branches:
-      - '**'
-    tags-ignore:
-<<<<<<< HEAD
-    - '*'
-  pull_request:
-  pull_request_review:
-  schedule:
-    - cron: '40 11 * * 6'
-=======
-      - '*'
->>>>>>> dev
 
 jobs:
 
-  CHECK:
+  BUILD:
 
-    # don't run on pull request from ourselves
-    #     #
-    #         if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
     runs-on: ubuntu-20.04
-
     strategy:
       fail-fast: false
       max-parallel: 2
@@ -56,11 +38,6 @@ jobs:
 
     steps:
 
-      - name: pull container images
-        run: |
-          podman login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
-          podman pull $CI_IMAGE
-
       - name: checkout collection mafalb.containerimages
         uses: actions/checkout@v2
         with:
@@ -70,9 +47,9 @@ jobs:
         run: |
           make tools
 
-      - name: check for updates
+      - name: build images
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
-          molecule test
+          make ${{ matrix.os }}-${{ matrix.flavor }}
 
 ...
