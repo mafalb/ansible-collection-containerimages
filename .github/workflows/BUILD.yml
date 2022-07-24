@@ -59,6 +59,7 @@ jobs:
 
       - name: push image
         run: |
+          podman login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
           source ~/.virtualenvs/ci-tools/bin/activate
-          ansible-bender push ghcr.io/mafalb/$CI_TARGET
+          ansible-bender push ghcr.io/${{ github.actor }}/$CI_TARGET
 ...
