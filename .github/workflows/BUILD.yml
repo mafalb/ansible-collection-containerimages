@@ -1,7 +1,7 @@
 # vim: set ft=yaml ts=2 expandtab:
 ---
 
-name: B
+name: BUILD
 
 on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
