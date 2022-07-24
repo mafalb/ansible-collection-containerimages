@@ -15,7 +15,7 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
-  build_image:
+  BUILD:
 
     runs-on: ubuntu-20.04
 
