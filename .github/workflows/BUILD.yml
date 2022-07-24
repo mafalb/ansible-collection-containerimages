@@ -12,7 +12,7 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
-  BUILD:
+  build_image:
 
     runs-on: ubuntu-20.04
 
@@ -40,7 +40,7 @@ jobs:
       - name: build image
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
-          ansible-playbook collection install -r molecule/default/requirements.yml -p playbooks/collections
+          ansible-galaxy collection install -r molecule/default/requirements.yml -p playbooks/collections
           make $CI_CONTAINER
           
       - name: test image
