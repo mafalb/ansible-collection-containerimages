@@ -4,21 +4,21 @@
 name: CI
 
 on:  # yamllint disable-line rule:truthy
-
-  workflow_dispatch:
   push:
     branches:
       - '**'
     tags-ignore:
       - '*'
+  pull_request:
+  pull_request_review:
 
 jobs:
 
-  CHECK:
+  ci:
 
     # don't run on pull request from ourselves
-    #     #
-    #         if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+
     runs-on: ubuntu-20.04
 
     strategy:
@@ -33,12 +33,11 @@ jobs:
 
         os:
           - centos7
-          - fedora36
+          #- fedora36
 
     env:
       CI_NAME: ${{ matrix.os }}
-      CI_IMAGE: "ghcr.io/${{ github.repository_owner }}/${{ matrix.os }}-${{ matrix.flavor }}:latest"
-      CI_CONTAINER: "${{ matrix.os }}-${{ matrix.flavor }}"
+      CI_TARGET: "${{ matrix.os }}-${{ matrix.flavor }}"
       PY_COLORS: 1
       ANSIBLE_FORCE_COLOR: 1
 
@@ -53,18 +52,29 @@ jobs:
         with:
           path: ansible_collections/mafalb/containerimages
 
-      - name: pull container images
-        run: |
-          podman login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
-          podman pull $CI_IMAGE
-
       - name: install necessary tools into a python virtualenv
         run: |
           make tools
 
-      - name: check for updates
+      - name: lint
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
-          molecule test
+          bash tests/lint.sh
+
+      - name: build image
+        run: |
+          source ~/.virtualenvs/ci-tools/bin/activate
+          ansible-galaxy collection install containers.podman -p playbooks/collections
+          make $CI_TARGET
+
+      - name: debug
+        run: |
+          podman images
+          podman inspect localhost/mafalb/$CI_TARGET
+
+      - name: run tests
+        run: |
+          source ~/.virtualenvs/ci-tools/bin/activate
+          CI_IMAGE=localhost/mafalb/$CI_TARGET molecule test
 
 ...

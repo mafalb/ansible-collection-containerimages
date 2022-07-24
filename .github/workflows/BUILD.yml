@@ -51,7 +51,7 @@ jobs:
           podman images
           podman inspect localhost/mafalb/$CI_TARGET
 
-      - name: verify image
+      - name: run tests
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
           CI_IMAGE=localhost/mafalb/$CI_TARGET molecule test

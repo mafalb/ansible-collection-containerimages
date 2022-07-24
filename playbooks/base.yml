@@ -10,12 +10,12 @@
   vars:
     ansible_bender: "{{ _ansible_bender[lookup('ansible.builtin.env','OS', default=Undefined) + '-base'] }}"
   tasks:
-    - name: all packages are updated
-      package:
+    - name: all packages are updated  # noqa: package-latest
+      ansible.builtin.package:
         name: "*"
         state: latest
     - name: clean the cache
-      command: yum clean all
+      ansible.builtin.command: yum clean all
       changed_when: false
 
 ...
