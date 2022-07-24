@@ -60,7 +60,7 @@ jobs:
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
           ansible-galaxy collection install containers.podman -p playbooks/collections
-          . tests/lint.sh
+          . tests/lint.sh requirements
 
       - name: build image
         run: |

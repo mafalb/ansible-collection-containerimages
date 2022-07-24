@@ -59,15 +59,15 @@ if test "$ANSIBLE_LINT_VERSION" == 4
 then
 	ANSIBLE_COLLECTIONS_PATHS=../../.. ansible-lint -v -c .ansible-lint-4
 else
-	ANSIBLE_COLLECTIONS_PATHS=../../..:playbooks/collections ansible-lint -v
+	ansible-lint -v
 fi
 
 echo "ansible-lint of variables..."
-ANSIBLE_COLLECTIONS_PATHS=../../..:playbooks/collections ansible-lint -v roles/*/vars/*.yml
+ansible-lint -v roles/*/vars/*.yml
 
 echo "flake8..."
 flake8 -v --exclude tests/output
 
 echo "ansible-test sanity..."
 # shellcheck disable=SC2068
-ansible-test sanity ${args[@]}
+#ansible-test sanity ${args[@]}
