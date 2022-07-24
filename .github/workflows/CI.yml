@@ -60,11 +60,12 @@ jobs:
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
           ansible-galaxy collection install containers.podman -p playbooks/collections
-          bash tests/lint.sh
+          . tests/lint.sh
 
       - name: build image
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
+          ansible-galaxy collection install containers.podman -p playbooks/collections
           make $CI_TARGET
 
       - name: debug
