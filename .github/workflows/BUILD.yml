@@ -5,30 +5,19 @@ name: BUILD
 
 on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
+    inputs:
+      container:
+        description: an os-flavor combination, e.g. centos7-base
+        required: true
 
 jobs:
 
   BUILD:
 
     runs-on: ubuntu-20.04
-    strategy:
-      fail-fast: false
-      max-parallel: 2
-
-      matrix:
-
-        flavor:
-          - base
-          - systemd
-
-        os:
-          - centos7
-          - fedora36
 
     env:
-      CI_NAME: ${{ matrix.os }}
-      CI_IMAGE: "ghcr.io/${{ github.repository_owner }}/${{ matrix.os }}.${{ matrix.flavor }}:latest"
-      CI_CONTAINER: "${{ matrix.os }}-${{ matrix.flavor }}"
+      CI_CONTAINER: "i${{ github.event.inputs.container }}"
       PY_COLORS: 1
       ANSIBLE_FORCE_COLOR: 1
 
@@ -50,6 +39,6 @@ jobs:
       - name: build images
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
-          make ${{ matrix.os }}-${{ matrix.flavor }}
+          make ${{ CI_CONTAINER }}
 
 ...
