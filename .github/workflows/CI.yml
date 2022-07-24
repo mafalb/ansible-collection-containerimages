@@ -27,13 +27,13 @@ jobs:
 
       matrix:
 
-        flavor:
-          - base
-          - systemd
-
-        os:
-          - centos7
-          #- fedora36
+        include:
+          - flavor: base
+            os: centos7
+            base_image: quay.io/centos/centos:centos7
+          - flavor: systemd
+            os: centos7
+            base_image: quay.io/centos/centos:centos7
 
     env:
       CI_NAME: ${{ matrix.os }}
@@ -67,7 +67,7 @@ jobs:
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
           ansible-galaxy collection install containers.podman -p playbooks/collections
-          make $CI_TARGET
+          make $CI_TARGET BASE_IMAGE=${{ matrix.base_image }}
 
       - name: debug
         run: |
