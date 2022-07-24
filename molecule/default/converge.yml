@@ -16,11 +16,11 @@
         state: latest
       check_mode: true
       notify: build the container
-      when: not lookup('env', 'FORCE_BUILD')
+      when: not lookup('env', 'FORCE_BUILD', default=false)
 
     - name: build image unconditionally
       ansible.builtin.debug:
         msg: "build image unconditionally"
       notify: build the container
-      when: lookup('env', 'FORCE_BUILD')
+      when: lookup('env', 'FORCE_BUILD', default=false)
 ...
