@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     env:
-      CI_CONTAINER: "i${{ github.event.inputs.container }}"
+      CI_CONTAINER: "${{ github.event.inputs.container }}"
       PY_COLORS: 1
       ANSIBLE_FORCE_COLOR: 1
 
@@ -39,6 +39,6 @@ jobs:
       - name: build images
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
-          make ${{ CI_CONTAINER }}
+          make $CI_CONTAINER
 
 ...
