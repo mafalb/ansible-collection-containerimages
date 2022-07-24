@@ -18,6 +18,7 @@ jobs:
 
     env:
       CI_CONTAINER: "${{ github.event.inputs.container }}"
+      CI_IMAGE: "localhost/mafalb/${{ github.event.inputs.container }}"
       PY_COLORS: 1
       ANSIBLE_FORCE_COLOR: 1
 
@@ -36,9 +37,15 @@ jobs:
         run: |
           make tools
 
-      - name: build images
+      - name: build image
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
+          ansible-playbook collection install -r molecule/default/requirements.yml -p playbooks/collections
           make $CI_CONTAINER
+          
+      - name: test image
+        run: |
+          source ~/.virtualenvs/ci-tools/bin/activate
+          molecule test
 
 ...
