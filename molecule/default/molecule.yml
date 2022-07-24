@@ -9,7 +9,6 @@ driver:
 platforms:
   - name: ci
     image: ${CI_IMAGE}
-    prebuild: true
 provisioner:
   name: ansible
 verifier:
