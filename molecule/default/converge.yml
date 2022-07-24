@@ -4,6 +4,11 @@
 ---
 - name: Converge
   hosts: all
+  handlers:
+    - name: build the container
+      make:
+        chdir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}"
+        target: "{{ lookup('env', 'CI_TARGET') }}"
   tasks:
     - name: all updates are installed
       ansible.builtin.package:
