@@ -44,11 +44,16 @@ jobs:
       - name: build image
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
-          molecule -e .env-${CI_NAME}.yml test
-          
+          ansible-galaxy collection install containers.podman -p playbooks/collections
+          make $CI_TARGET
+
       - name: debug
         run: |
           podman images
-          podman inspect localhost/mafalb/$CI_CONTAINER
+          podman inspect localhost/mafalb/$CI_TARGET
+
+      - name: verify image
+          source ~/.virtualenvs/ci-tools/bin/activate
+          CI_IMAGE=localhost/mafalb/$CI_TARGET molecule test
 
 ...

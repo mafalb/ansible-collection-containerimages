@@ -9,12 +9,6 @@
       make:
         chdir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}"
         target: "{{ lookup('env', 'CI_TARGET') }}"
-  tasks:
-    - name: build image if necessary
-      ansible.builtin.package:
-        name: '*'
-        state: latest
-      check_mode: true
-      notify: build the container
-
+  gather_facts: false
+  tasks: []
 ...
