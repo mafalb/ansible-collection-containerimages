@@ -67,7 +67,8 @@ jobs:
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
           ansible-galaxy collection install containers.podman -p playbooks/collections
-          make $CI_TARGET BASE_IMAGE=${{ matrix.base_image }}
+          make ${{ matrix.os }}-base
+          make $CI_TARGET
 
       - name: debug
         run: |
