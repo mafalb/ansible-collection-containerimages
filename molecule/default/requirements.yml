@@ -2,7 +2,12 @@
 ---
 
 collections:
-- name: containers.podman
+
+  # for buildah connection plugin
+  - name: containers.podman
+
+  # for make
+  - name: community.general
 
 #- name: https://github.com/mafalb/ansible-collection-containers
 #  type: git
