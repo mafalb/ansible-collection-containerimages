@@ -22,7 +22,6 @@ jobs:
     env:
       CI_NAME: "${{ github.event.inputs.os }}"
       CI_TARGET: "${{ github.event.inputs.os }}-${{ github.event.inputs.flavor }}"
-      FORCE_BUILD: true
       PY_COLORS: 1
       ANSIBLE_FORCE_COLOR: 1
 
