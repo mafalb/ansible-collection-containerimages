@@ -10,10 +10,17 @@
         chdir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}"
         target: "{{ lookup('env', 'CI_TARGET') }}"
   tasks:
-    - name: all updates are installed
+    - name: build image if necessary
       ansible.builtin.package:
         name: '*'
         state: latest
       check_mode: true
       notify: build the container
+      when: not lookup('env', 'FORCE_BUILD')
+
+    - name: build image unconditionally
+      ansible.builtin.debug:
+        msg: "build image unconditionally"
+      notify: build the container
+      when: lookup('env', 'FORCE_BUILD')
 ...
