@@ -1,4 +1,4 @@
 - name: build the container
   make:
-    chdir: "{{ lookup('env', 'MOLECULE_PROJECT_DIR') }}"
+    chdir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}"
     target: "{{ lookup('env', 'CI_CONTAINER') }}"

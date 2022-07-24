@@ -6,8 +6,11 @@ name: BUILD
 on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
     inputs:
-      container:
-        description: an os-flavor combination, e.g. centos7-base
+      os:
+        description: an os, e.g. centos7
+        required: true
+      flavor:
+        description: the flavor, e.g. base or systemd
         required: true
 
 jobs:
@@ -17,8 +20,8 @@ jobs:
     runs-on: ubuntu-20.04
 
     env:
-      CI_CONTAINER: "${{ github.event.inputs.container }}"
-      CI_IMAGE: "localhost/mafalb/${{ github.event.inputs.container }}"
+      CI_NAME: "${{ github.event.inputs.os }}"
+      CI_CONTAINER: "${{ github.event.inputs.os }}-${{ github.event.inputs.flavor }}"
       PY_COLORS: 1
       ANSIBLE_FORCE_COLOR: 1
 
@@ -41,11 +44,10 @@ jobs:
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
           ansible-galaxy collection install -r molecule/default/requirements.yml -p playbooks/collections
-          make $CI_CONTAINER
+          molecule -e .env-${CI_NAME}.yml test
           
-      - name: test image
+      - name: debug
         run: |
-          source ~/.virtualenvs/ci-tools/bin/activate
-          molecule test
-
+          podman images
+          podman inspect localhost/mafalb/$CI_CONTAINER
 ...
