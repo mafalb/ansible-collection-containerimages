@@ -3,7 +3,7 @@ dependency:
   name: galaxy
   options:
     role-file: /dev/null
-    requirements-file: molecule/build/requirements.yml
+    requirements-file: molecule/default/requirements.yml
 driver:
   name: podman
 platforms:

@@ -43,7 +43,7 @@ jobs:
       - name: build image
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
-          ansible-galaxy collection install -r molecule/default/requirements.yml -p playbooks/collections
+     #     ansible-galaxy collection install -r molecule/default/requirements.yml -p playbooks/collections
           molecule -e .env-${CI_NAME}.yml test
           
       - name: debug
