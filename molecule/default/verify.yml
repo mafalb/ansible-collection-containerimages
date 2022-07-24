@@ -15,4 +15,5 @@
         msg: "Not all available updates are installed in this image"
         that:
           - not _updates.changed
+      when: false
 ... 
