@@ -4,11 +4,5 @@
 ---
 - name: Converge
   hosts: all
-  handlers:
-    - name: build the container
-      community.general.make:
-        chdir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}"
-        target: "{{ lookup('env', 'CI_TARGET') }}"
-  gather_facts: false
   tasks: []
 ...
