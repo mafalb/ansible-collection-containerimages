@@ -19,6 +19,12 @@ _ansible_bender:
   centos7-systemd:
     layering: false
     target_image:
+      volumes:
+        - /run
+        - /run/lock
+        - /sys/fs/cgroup
+        - /tmp
+      cmd: "/lib/systemd/systemd"
       labels:
         'org.opencontainers.image.title': 'CentOS 7 Systemd Image'
         'org.label-schema.name': 'CentOS 7 Systemd Image'
@@ -40,6 +46,12 @@ _ansible_bender:
   fedora36-systemd:
     layering: false
     target_image:
+      volumes:
+        - /run
+        - /run/lock
+        - /sys/fs/cgroup
+        - /tmp
+      cmd: "/lib/systemd/systemd"
       labels:
 #        'org.opencontainers.image.created': "{{ ansible_date_time.iso8601 }}"
         "name": "Fedora with Systemd"

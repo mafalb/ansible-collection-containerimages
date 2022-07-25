@@ -1,0 +1,22 @@
+# Copyright (c) 2022 Markus Falb <markus.falb@mafalb.at>
+# GNU General Public License v3.0+
+# see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
+---
+- name: Verify
+  hosts: all
+  tasks:
+    - name: all updates are installed  # noqa: package-latest
+      ansible.builtin.package:
+        name: '*'
+        state: latest
+      register: _updates
+      check_mode: true
+    - name: assertions
+      assert:
+        msg: "Not all available updates are installed in this image"
+        that:
+          - not _updates.changed
+    - name: openssh is running
+      service: sshd
+      state: started
+... 

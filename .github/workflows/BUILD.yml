@@ -54,11 +54,12 @@ jobs:
       - name: run tests
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
-          CI_IMAGE=localhost/mafalb/$CI_TARGET molecule test
+          CI_IMAGE=localhost/mafalb/$CI_TARGET molecule test -s ${{ github.event.inputs.flavor }}
 
       - name: push image
         run: |
           podman login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
           source ~/.virtualenvs/ci-tools/bin/activate
           ansible-bender push ghcr.io/${{ github.actor }}/$CI_TARGET
+
 ...

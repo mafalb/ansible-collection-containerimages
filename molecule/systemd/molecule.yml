@@ -1,0 +1,35 @@
+# Copyright (c) 2022 Markus Falb <markus.falb@mafalb.at>
+# GNU General Public License v3.0+
+# see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
+---
+dependency:
+  name: galaxy
+  options:
+    role-file: /dev/null
+    requirements-file: molecule/default/requirements.yml
+#lint:
+#  ansible-lint -v
+driver:
+  name: podman
+platforms:
+  - name: ci
+    image: ${CI_IMAGE}
+    pre_build_image: true
+    command: /lib/systemd/systemd
+    extra_opts:
+      - --stop-signal SIGRTMIN+3
+    volumes:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    tmpfs:
+      - /tmp
+      - /run
+      - /run/lock
+#    capabilities:
+#      - SYS_ADMIN
+    privileged: true
+
+provisioner:
+  name: ansible
+verifier:
+  name: ansible
+...
