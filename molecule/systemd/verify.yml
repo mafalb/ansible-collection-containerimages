@@ -17,6 +17,7 @@
         that:
           - not _updates.changed
     - name: sshd is running
-      service: sshd
+      service:
+        name: sshd
         state: started
 ... 
