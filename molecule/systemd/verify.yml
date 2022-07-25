@@ -16,7 +16,7 @@
         msg: "Not all available updates are installed in this image"
         that:
           - not _updates.changed
-    - name: openssh is running
+    - name: sshd is running
       service: sshd
-      state: started
+        state: started
 ... 
