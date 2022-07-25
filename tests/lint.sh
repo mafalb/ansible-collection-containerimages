@@ -66,7 +66,7 @@ echo "ansible-lint of variables..."
 ansible-lint -v roles/*/vars/*.yml
 
 echo "flake8..."
-flake8 -v --exclude tests/output
+flake8 -v --exclude tests/output --exclude playbooks/collections
 
 echo "ansible-test sanity..."
 # shellcheck disable=SC2068
