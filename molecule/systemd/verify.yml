@@ -5,17 +5,6 @@
 - name: Verify
   hosts: all
   tasks:
-    - name: all updates are installed  # noqa: package-latest
-      ansible.builtin.package:
-        name: '*'
-        state: latest
-      register: _updates
-      check_mode: true
-    - name: assertions
-      assert:
-        msg: "Not all available updates are installed in this image"
-        that:
-          - not _updates.changed
     - name: sshd is running
       service:
         name: sshd
