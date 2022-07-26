@@ -2,8 +2,9 @@
 # GNU General Public License v3.0+
 # see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
 ---
-- name: Verify
-  hosts: all
+
+- name: verify all
+  hosts: ci_group
   tasks:
     - name: all updates are installed  # noqa: package-latest
       ansible.builtin.package:
@@ -16,4 +17,13 @@
         msg: "Not all available updates are installed in this image"
         that:
           - not _updates.changed
+
+- name: verify systemd
+  hosts: systemd_group
+  tasks:
+    - name: sshd is running
+      service:
+        name: sshd
+        state: started
+
 ... 

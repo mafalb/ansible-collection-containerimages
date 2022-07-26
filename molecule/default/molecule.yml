@@ -7,13 +7,18 @@ dependency:
   options:
     role-file: /dev/null
     requirements-file: molecule/default/requirements.yml
-#lint:
-#  ansible-lint -v
 driver:
   name: podman
 platforms:
-  - name: ci
-    image: ${CI_IMAGE}
+
+  - name: ci-base
+    image: localhost/mafalb/${CI_NAME}-base
+    groups:
+      - ci_group
+      - base_group
+
+  - name: ci-systemd
+    image: localhost/mafalb/${CI_NAME}-systemd
     pre_build_image: true
     command: /lib/systemd/systemd
     extra_opts:
@@ -24,10 +29,12 @@ platforms:
       - /tmp
       - /run
       - /run/lock
-#    capabilities:
-#      - SYS_ADMIN
-    privileged: true
-
+    capabilities:
+      - SYS_ADMIN
+    groups:
+      - ci_group
+      - systemd_group
+    
 provisioner:
   name: ansible
 verifier:

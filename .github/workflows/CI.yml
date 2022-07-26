@@ -19,38 +19,18 @@ jobs:
     # don't run on pull request from ourselves
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
 
+    # note: centos7 needs cgroups v1
     runs-on: ubuntu-20.04
 
     strategy:
       fail-fast: false
-      #max-parallel: 2
-
       matrix:
-
-        include:
-          - flavor: base
-            os: centos7
-            base_image: quay.io/centos/centos:centos7
-
-          # we build against the official base images here
-          # to save time
-          - flavor: systemd
-            os: centos7
-            base_image: quay.io/centos/centos:centos7
-
-          - flavor: base
-            os: fedora36
-            base_image: registry.fedoraproject.org/fedora:36
-
-          # we build against the official base images here
-          # to save time
-          - flavor: systemd
-            os: fedora36
-            base_image: registry.fedoraproject.org/fedora:36
+        os:
+          - centos7
+          - fedora36
 
     env:
       CI_NAME: ${{ matrix.os }}
-      CI_TARGET: "${{ matrix.os }}-${{ matrix.flavor }}"
       PY_COLORS: 1
       ANSIBLE_FORCE_COLOR: 1
 
@@ -76,20 +56,23 @@ jobs:
           ansible-lint --version
           . tests/lint.sh requirements
 
-      - name: build image
+      - name: build base image
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
           make deps
-          make $CI_TARGET BASE_IMAGE=${{ matrix.base_image }}
+          make ${{ matrix.os }}-base
+          podman inspect localhost/mafalb/${{ matrix.os }}-base
 
-      - name: debug
+      - name: build systemd image
         run: |
-          podman images
-          podman inspect localhost/mafalb/$CI_TARGET
+          source ~/.virtualenvs/ci-tools/bin/activate
+          make deps
+          make ${{ matrix.os }}-systemd
+          podman inspect localhost/mafalb/${{ matrix.os }}-systemd
 
       - name: run tests
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
-          CI_IMAGE=localhost/mafalb/$CI_TARGET molecule test -s ${{ matrix.flavor }}
+          molecule test
 
 ...
