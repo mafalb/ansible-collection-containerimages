@@ -13,6 +13,7 @@ platforms:
 
   - name: ci-base
     image: localhost/mafalb/${CI_NAME}-base
+    pre_build_image: true
     groups:
       - ci_group
       - base_group
