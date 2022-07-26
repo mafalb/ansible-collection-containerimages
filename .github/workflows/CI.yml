@@ -80,7 +80,7 @@ jobs:
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
           make deps
-          make $CI_TARGET BASE_IMAGE=${{ matrix.image }}
+          make $CI_TARGET BASE_IMAGE=${{ matrix.base_image }}
 
       - name: debug
         run: |
