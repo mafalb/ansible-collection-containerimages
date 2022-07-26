@@ -6,7 +6,7 @@ name: CHECK
 on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
   schedule:
-    - cron: '40 15 * * 7'
+    - cron: '40 15 * * 6'
 
 jobs:
 
