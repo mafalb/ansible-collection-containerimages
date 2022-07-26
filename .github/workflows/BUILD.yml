@@ -43,7 +43,7 @@ jobs:
       - name: build image
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
-          ansible-galaxy collection install containers.podman -p playbooks/collections
+          make deps
           make $CI_TARGET
 
       - name: debug

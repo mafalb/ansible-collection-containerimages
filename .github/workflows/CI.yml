@@ -23,7 +23,7 @@ jobs:
 
     strategy:
       fail-fast: false
-      max-parallel: 2
+      #max-parallel: 2
 
       matrix:
 
@@ -31,12 +31,19 @@ jobs:
           - flavor: base
             os: centos7
             base_image: quay.io/centos/centos:centos7
+
+          # we build against the official base images here
+          # to save time
           - flavor: systemd
             os: centos7
             base_image: quay.io/centos/centos:centos7
+
           - flavor: base
             os: fedora36
-            base_image: quay.io/centos/centos:centos7
+            base_image: registry.fedoraproject.org/fedora:36
+
+          # we build against the official base images here
+          # to save time
           - flavor: systemd
             os: fedora36
             base_image: registry.fedoraproject.org/fedora:36
@@ -72,9 +79,8 @@ jobs:
       - name: build image
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
-          ansible-galaxy collection install containers.podman -p playbooks/collections
-          make ${{ matrix.os }}-base
-          make $CI_TARGET
+          make deps
+          make $CI_TARGET BASE_IMAGE=${{ matrix.image }}
 
       - name: debug
         run: |
