@@ -1,0 +1,95 @@
+# vim: set ft=yaml ts=2 expandtab:
+---
+
+name: CI22
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - '*'
+  pull_request:
+  pull_request_review:
+
+jobs:
+
+  ci:
+
+    # don't run on pull request from ourselves
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+
+    runs-on: ubuntu-22.04
+
+    strategy:
+      fail-fast: false
+      #max-parallel: 2
+
+      matrix:
+
+        include:
+          - flavor: base
+            os: centos7
+            base_image: quay.io/centos/centos:centos7
+
+          # we build against the official base images here
+          # to save time
+          - flavor: systemd
+            os: centos7
+            base_image: quay.io/centos/centos:centos7
+
+          - flavor: base
+            os: fedora36
+            base_image: registry.fedoraproject.org/fedora:36
+
+          # we build against the official base images here
+          # to save time
+          - flavor: systemd
+            os: fedora36
+            base_image: registry.fedoraproject.org/fedora:36
+
+    env:
+      CI_NAME: ${{ matrix.os }}
+      CI_TARGET: "${{ matrix.os }}-${{ matrix.flavor }}"
+      PY_COLORS: 1
+      ANSIBLE_FORCE_COLOR: 1
+
+    defaults:
+      run:
+        working-directory: ansible_collections/mafalb/containerimages
+
+    steps:
+
+      - name: checkout collection mafalb.containerimages
+        uses: actions/checkout@v2
+        with:
+          path: ansible_collections/mafalb/containerimages
+
+      - name: install necessary tools into a python virtualenv
+        run: |
+          make tools
+
+      - name: lint
+        run: |
+          source ~/.virtualenvs/ci-tools/bin/activate
+          which ansible-lint
+          ansible-lint --version
+          . tests/lint.sh requirements
+
+      - name: build image
+        run: |
+          source ~/.virtualenvs/ci-tools/bin/activate
+          make deps
+          make $CI_TARGET BASE_IMAGE=${{ matrix.base_image }}
+
+      - name: debug
+        run: |
+          podman images
+          podman inspect localhost/mafalb/$CI_TARGET
+
+      - name: run tests
+        run: |
+          source ~/.virtualenvs/ci-tools/bin/activate
+          CI_IMAGE=localhost/mafalb/$CI_TARGET molecule test -s ${{ matrix.flavor }}
+
+...
