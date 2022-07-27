@@ -26,15 +26,19 @@ platforms:
       - --stop-signal SIGRTMIN+3
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    devices:
+      - /dev/fuse
     tmpfs:
       - /tmp
       - /run
       - /run/lock
-    capabilities:
-      - SYS_ADMIN
+    #capabilities:
+    #  - SYS_ADMIN
+    #  - MKNOD
     groups:
       - ci_group
       - systemd_group
+    privileged: true
     
 provisioner:
   name: ansible
