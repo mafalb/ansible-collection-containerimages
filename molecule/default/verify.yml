@@ -3,27 +3,63 @@
 # see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
 ---
 
+- name: verify systemd
+  hosts: systemd_group
+  tasks:
+
+    - name: systemd is running without errors  # noqa: command-instead-of-module
+      command: systemctl is-system-running
+      changed_when: false
+
+    - name: sshd is running
+      service:
+        name: sshd
+        state: started
+
 - name: verify all
   hosts: ci_group
+  order: sorted
+  vars_files: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') + '/imagetree.yml' }}"
+
+  handlers:
+    - name: dispatch build
+      debug:
+        msg: dispatch {{ os }}-{{ flavor }}
+      when:
+        - github_workflow == 'CHECK'
+        - os is defined
+        - flavor is defined
+
+    - name: dispatch build of child
+      debug:
+        msg: dispatch {{ os }}-{{ flavor }}
+      when:
+        - github_workflow == 'BUILD'
+
   tasks:
+
     - name: all updates are installed  # noqa: package-latest
       ansible.builtin.package:
         name: '*'
         state: latest
       register: _updates
       check_mode: true
+      notify: dispatch build
+
     - name: assertions
       assert:
         msg: "Not all available updates are installed in this image"
         that:
           - not _updates.changed
+      when: 
+        - github_workflow == 'CI'
 
-- name: verify systemd
-  hosts: systemd_group
-  tasks:
-    - name: sshd is running
-      service:
-        name: sshd
-        state: started
+    - name: dispatch all childs
+      debug:
+        msg: "dispatch {{ os }}-{{ item }}"
+      loop: "{{ images[os][flavor] }}"
+      when:
+        - github_workflow == 'BUILD'
+        - build_dependents
 
 ... 

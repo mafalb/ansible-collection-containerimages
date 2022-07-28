@@ -12,6 +12,8 @@ on:  # yamllint disable-line rule:truthy
       flavor:
         description: the flavor, e.g. base or systemd
         required: true
+      build_dependents:
+        default: false
 
 jobs:
 
@@ -20,7 +22,9 @@ jobs:
     runs-on: ubuntu-20.04
 
     env:
+      BUILD_DEPENDENTS: "${{ github.event.inputs.build_dependents }}"
       CI_NAME: "${{ github.event.inputs.os }}"
+      CI_FLAVOR: "${{ github.event.inputs.flavor }}"
       CI_TARGET: "${{ github.event.inputs.os }}-${{ github.event.inputs.flavor }}"
       PY_COLORS: 1
       ANSIBLE_FORCE_COLOR: 1

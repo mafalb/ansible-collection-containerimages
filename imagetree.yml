@@ -1,0 +1,9 @@
+---
+
+images:
+  centos7:
+    base:
+      - systemd
+  fedora36:
+     base:
+      - systemd

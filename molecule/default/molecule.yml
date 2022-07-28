@@ -44,6 +44,11 @@ platforms:
     
 provisioner:
   name: ansible
+  ansible_args:
+    - --tags=all,debug
+    - --diff
+    - -e github_workflow=${GITHUB_WORKFLOW} -e os=${CI_NAME} -e flavor=${CI_FLAVOR} -e build_dependents=${BUILD_DEPENDENTS:-false}
+
 verifier:
   name: ansible
 ...
