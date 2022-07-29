@@ -30,9 +30,13 @@
             os: "{{ os }}"
             flavor: "{{ flavor }}"
             build_dependents: "true"
+      register: _api_call
       loop: "{{ images[os][flavor] }}"
       when:
         - build_dependents
         - "lookup('env','GITHUB_ACTIONS',default='false')"
+
+    - name: debug 
+      debug: var=_api_call
 
 ... 
