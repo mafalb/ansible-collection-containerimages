@@ -24,10 +24,10 @@
           Authorization: token {{ registry_token }}
         body_format: json
         body:
-          ref: {{ github_ref }}
+          ref: "{{ github_ref }}"
           inputs:
-            os: {{ os }}
-            flavor: {{ flavor }}
+            os: "{{ os }}"
+            flavor: "{{ flavor }}"
             build_descendants: true
       loop: "{{ images[os][flavor] }}"
       when:
