@@ -13,12 +13,18 @@
         password: "{{ registry_token }}"
         registry: "{{ registry }}"
 
+    # does not work
+    # https://github.com/containers/ansible-podman-collections/issues/218
     - name: push the image
+      when: false
       containers.podman.podman_image:
         name: localhost/{{ registry_user }}/{{ os }}-{{ flavor }}:latest
         pull: false
         push: true
         push_args:
           dest: "{{ registry }}/{{ registry_user }}/{{ os }}-{{ flavor }}:latest"
+
+    - name: push the image
+      command: ansible-bender push {{ registry }}/{{ registry_user }}/{{ os }}-{{ flavor }}
 
 ... 
