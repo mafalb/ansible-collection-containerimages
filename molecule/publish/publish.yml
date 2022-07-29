@@ -15,9 +15,9 @@
 
     - name: push the image
       containers.podman.podman_image:
-        name: localhost/mafalb/{{ ci_name }}-{{ ci_flavor }}:latest
+        name: localhost/mafalb/{{ os }}-{{ ci_flavor }}:latest
         push: true
         push_args:
-          dest: ghcr.io/mafalb/{{ ci_name }}-{{ ci_flavor }}:latest
+          dest: ghcr.io/mafalb/{{ os }}-{{ ci_flavor }}:latest
 
 ... 
