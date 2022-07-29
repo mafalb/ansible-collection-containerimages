@@ -15,4 +15,22 @@
       when:
         - build_dependents
 
+    - name: dispatch build
+      ansible.builtin.uri:
+        url: https://api.github.com/repos/mafalb/ansible-collection-containerimages/actions/workflows/BUILD.yml/dispatches
+        method: POST
+        headers:
+          Accept: application/vnd.github.v3+json"
+          Authorization: token {{ github_token }}
+        body_format: json
+        body: |
+          ref: {{ github_ref }}
+          inputs:
+            os: {{ os }}
+            flavor: {{ flavor }}
+            build_descendants: true
+      loop: "{{ images[os][flavor] }}"
+      when:
+        - build_dependents
+
 ... 
