@@ -28,7 +28,7 @@
         method: POST
         headers:
           Accept: application/vnd.github.v3+json"
-          Authorization: token {{ github_token }}
+          Authorization: token {{ registry_token }}
         body_format: json
         body: |
           ref: {{ github_ref }}
@@ -36,12 +36,6 @@
             os: {{ os }}
             flavor: {{ flavor }}
             build_descendants: true
-
-    - name: dispatch build of child
-      debug:
-        msg: dispatch {{ os }}-{{ flavor }}
-      when:
-        - github_workflow == 'BUILD'
 
   tasks:
 
