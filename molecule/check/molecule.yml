@@ -1,0 +1,61 @@
+# Copyright (c) 2022 Markus Falb <markus.falb@mafalb.at>
+# GNU General Public License v3.0+
+# see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
+---
+dependency:
+  name: galaxy
+  options:
+    role-file: /dev/null
+    requirements-file: molecule/default/requirements.yml
+driver:
+  name: podman
+platforms:
+
+  - name: ci-base
+    image: ${CI_REGISTRY}/mafalb/${CI_NAME}-base
+    pre_build_image: true
+    groups:
+      - ci_group
+      - base_group
+
+  - name: ci-systemd
+    image: ${CI_REGISTRY}/mafalb/${CI_NAME}-systemd
+    pre_build_image: true
+    command: /lib/systemd/systemd
+    extra_opts:
+      - --stop-signal SIGRTMIN+3
+    volumes:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    devices:
+      - /dev/fuse
+    tmpfs:
+      - /tmp
+      - /run
+      - /run/lock
+    capabilities:
+      - SYS_ADMIN
+    #  - MKNOD
+    groups:
+      - ci_group
+      - systemd_group
+    security_opts:
+      - label=disable
+    #privileged: true
+    
+provisioner:
+  name: ansible
+  ansible_args:
+    - --tags=all,debug
+    - --diff
+    - -e os=${CI_NAME} -e flavor=${CI_FLAVOR} -e build_dependents=${BUILD_DEPENDENTS:-false}
+    - -e github_ref=${GITHUB_REF}
+
+  playbooks:
+    create: ../__shared_playbooks/create.yml
+    destroy: ../__shared_playbooks/destroy.yml
+    converge: ../__shared_playbooks/converge.yml
+
+verifier:
+  name: ansible
+
+...

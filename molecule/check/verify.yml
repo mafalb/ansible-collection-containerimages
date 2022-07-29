@@ -23,12 +23,19 @@
 
   handlers:
     - name: dispatch build
-      debug:
-        msg: dispatch {{ os }}-{{ flavor }}
-      when:
-        - github_workflow == 'CHECK'
-        - os is defined
-        - flavor is defined
+      ansible.builtin.uri:
+        url: https://api.github.com/repos/mafalb/ansible-collection-containerimages/actions/workflows/BUILD.yml/dispatches
+        method: POST
+        headers:
+          Accept: application/vnd.github.v3+json"
+          Authorization: token {{ github_token }}
+        body_format: json
+        body: |
+          ref: {{ github_ref }}
+          inputs:
+            os: {{ os }}
+            flavor: {{ flavor }}
+            build_descendants: true
 
     - name: dispatch build of child
       debug:
@@ -38,6 +45,8 @@
 
   tasks:
 
+    # do not fail it as this point
+    # do a dispatch first
     - name: all updates are installed  # noqa: package-latest
       ansible.builtin.package:
         name: '*'
@@ -51,11 +60,11 @@
   order: sorted
   vars_files: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') + '/imagetree.yml' }}"
   tasks:
+    # fail it now that a build is dispatched
     - name: assertions
       assert:
         msg: "Not all available updates are installed in this image"
         that:
           - not _updates.changed
-          - github_workflow == 'CI'
 
 ... 

@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       fail-fast: false
-      max-parallel: 2
+      max-parallel: 1
 
       matrix:
 
@@ -30,9 +30,7 @@ jobs:
 
     env:
       CI_NAME: "${{ matrix.os }}"
-      CI_FLAVOR: "${{ matrix.flavor }}"
-      CI_TARGET: "${{ matrix.os }}-${{ matrix.flavor }}"
-      CI_IMAGE: "ghcr.io/${{ github.actor }}/${{ matrix.os }}-${{ matrix.flavor }}:latest"
+      CI_REGISTRY: "ghcr.io"
       PY_COLORS: 1
       ANSIBLE_FORCE_COLOR: 1
 
@@ -50,7 +48,7 @@ jobs:
       - name: pull container images
         run: |
           podman login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
-          podman pull $CI_IMAGE
+          podman pull ghcr.io/${{ github.actor }}/${{ matrix.os }}-${{ matrix.flavor }}:latest
 
       - name: install necessary tools into a python virtualenv
         run: |
@@ -59,11 +57,11 @@ jobs:
       - name: debug
         run: |
           podman images
-          podman inspect $CI_IMAGE
+          podman inspect ghcr.io/${{ github.actor }}/${{ matrix.os }}-${{ matrix.flavor }}:latest
 
       - name: verify image
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
-          molecule test
+          molecule test -s check --platform-name ci-${{ matrix.flavor }}
 
 ...
