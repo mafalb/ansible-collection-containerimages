@@ -47,9 +47,10 @@ provisioner:
   ansible_args:
     - --tags=all,debug
     - --diff
-    - -e github_workflow=${GITHUB_WORKFLOW} -e os=${CI_NAME} -e flavor=${CI_FLAVOR}
+    - -e os=${CI_NAME} -e flavor=${CI_FLAVOR}
     - -e build_dependents=${BUILD_DEPENDENTS:-false}
-    - -e github_token=${GITHUB_TOKEN}
+    - -e registry_user=${CI_REGISTRY_USER} -e registry_token=${CI_REGISTRY_TOKEN} -e registry=${CI_REGISTRY}
+
   playbooks:
     create: ../__shared_playbooks/create.yml
     destroy: ../__shared_playbooks/destroy.yml

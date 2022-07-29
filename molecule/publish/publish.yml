@@ -9,8 +9,9 @@
 
     - name: login to the registry
       containers.podman.podman_login:
-        username: mafalb
-        password: "{{ github_token }}"
+        username: "{{ registry_user }}"
+        password: "{{ registry_token }}"
+        registry: "{{ registry }}"
 
     - name: push the image
       containers.podman.podman_image:
