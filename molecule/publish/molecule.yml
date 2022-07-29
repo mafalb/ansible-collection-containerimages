@@ -50,6 +50,7 @@ provisioner:
     - -e os=${CI_NAME} -e flavor=${CI_FLAVOR}
     - -e build_dependents=${BUILD_DEPENDENTS:-false}
     - -e registry_user=${CI_REGISTRY_USER} -e registry_token=${CI_REGISTRY_TOKEN} -e registry=${CI_REGISTRY}
+    - -e github_ref=${GITHUB_REF}
 
   playbooks:
     create: ../__shared_playbooks/create.yml
