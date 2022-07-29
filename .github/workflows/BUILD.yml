@@ -61,7 +61,7 @@ jobs:
       - name: run tests and push image
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
-          CI_IMAGE=localhost/mafalb/$CI_TARGET molecule test -s publish
+          CI_IMAGE=localhost/mafalb/$CI_TARGET molecule test -s publish --platform-name ci-$CI_FLAVOR
 
       - name: push image
         if: false
