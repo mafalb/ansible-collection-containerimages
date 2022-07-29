@@ -26,6 +26,7 @@
       ansible.builtin.uri:
         url: https://api.github.com/repos/mafalb/ansible-collection-containerimages/actions/workflows/BUILD.yml/dispatches
         method: POST
+        status_code: [204]
         headers:
           Accept: application/vnd.github.v3+json"
           Authorization: token {{ registry_token }}
