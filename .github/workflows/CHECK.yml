@@ -64,6 +64,6 @@ jobs:
       - name: verify image
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
-          molecule test -s ${{ matrix.flavor }}
+          molecule test
 
 ...

@@ -3,14 +3,11 @@
 # see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
 ---
 
-images:
-  centos7:
-    base:
-      - systemd
-    systemd: []
-  fedora36:
-    base:
-      - systemd
-    systemd: [] 
+- name: publish the image
+  hosts: localhost
+  tasks:
 
-...
+    - name: debug
+      debug: msg="side_effect.yml"
+
+... 

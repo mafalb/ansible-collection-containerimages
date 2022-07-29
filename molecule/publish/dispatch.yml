@@ -1,0 +1,18 @@
+# Copyright (c) 2022 Markus Falb <markus.falb@mafalb.at>
+# GNU General Public License v3.0+
+# see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
+---
+
+- name: dispatch child images
+  hosts: localhost
+  vars_files: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') + '/imagetree.yml' }}"
+  tasks:
+
+    - name: dispatch all childs
+      debug:
+        msg: "dispatch {{ os }}-{{ item }}"
+      loop: "{{ images[os][flavor] }}"
+      when:
+        - build_dependents
+
+... 

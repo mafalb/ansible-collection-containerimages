@@ -26,6 +26,9 @@ jobs:
       CI_NAME: "${{ github.event.inputs.os }}"
       CI_FLAVOR: "${{ github.event.inputs.flavor }}"
       CI_TARGET: "${{ github.event.inputs.os }}-${{ github.event.inputs.flavor }}"
+      CI_REGISTRY_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      CI_REGISTRY_USER: "${{ github.actor }}"
+      CI_REGISTRY: "ghcr.io"
       PY_COLORS: 1
       ANSIBLE_FORCE_COLOR: 1
 
@@ -55,12 +58,13 @@ jobs:
           podman images
           podman inspect localhost/mafalb/$CI_TARGET
 
-      - name: run tests
+      - name: run tests and push image
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
-          CI_IMAGE=localhost/mafalb/$CI_TARGET molecule test -s ${{ github.event.inputs.flavor }}
+          CI_IMAGE=localhost/mafalb/$CI_TARGET molecule test -s publish
 
       - name: push image
+        if: false
         run: |
           podman login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
           source ~/.virtualenvs/ci-tools/bin/activate

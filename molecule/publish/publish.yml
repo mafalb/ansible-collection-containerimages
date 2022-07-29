@@ -1,0 +1,22 @@
+# Copyright (c) 2022 Markus Falb <markus.falb@mafalb.at>
+# GNU General Public License v3.0+
+# see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
+---
+
+- name: publish the image
+  hosts: localhost
+  tasks:
+
+    - name: login to the registry
+      containers.podman.podman_login:
+        user: mafalb
+        password: "{{ github_token }}"
+
+    - name: push the image
+      containers.podman.podman_image:
+        name: localhost/mafalb/{{ ci_name }}-{{ ci_flavor }}:latest
+        push: true
+        push_args:
+          dest: ghcr.io/mafalb/{{ ci_name }}-{{ ci_flavor }}:latest
+
+... 
