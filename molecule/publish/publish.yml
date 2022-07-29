@@ -24,7 +24,7 @@
         push_args:
           dest: "{{ registry }}/{{ registry_user }}/{{ os }}-{{ flavor }}:latest"
 
-    - name: push the image
+    - name: push the image  # noqa: no-changed-when
       command: ansible-bender push {{ registry }}/{{ registry_user }}/{{ os }}-{{ flavor }}
 
 ... 
