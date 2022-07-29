@@ -28,7 +28,7 @@
           inputs:
             os: "{{ os }}"
             flavor: "{{ flavor }}"
-            build_descendants: true
+            build_descendants: "true"
       loop: "{{ images[os][flavor] }}"
       when:
         - build_dependents
