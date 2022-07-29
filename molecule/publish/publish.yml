@@ -15,7 +15,7 @@
 
     - name: push the image
       containers.podman.podman_image:
-        name: localhost/mafalb/{{ os }}-{{ ci_flavor }}:latest
+        name: localhost/mafalb/{{ os }}-{{ flavor }}:latest
         push: true
         push_args:
           dest: "{{ registry }}/{{ registry_user }}/{{ os }}-{{ flavor }}:latest"
