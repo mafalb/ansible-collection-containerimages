@@ -29,6 +29,7 @@ jobs:
       CI_REGISTRY_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
       CI_REGISTRY_USER: "${{ github.actor }}"
       CI_REGISTRY: "ghcr.io"
+      CI_PAT: "{{ secrets.PAT }}"
       GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
       PY_COLORS: 1
       ANSIBLE_FORCE_COLOR: 1

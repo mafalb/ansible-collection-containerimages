@@ -51,6 +51,7 @@ provisioner:
     - -e build_dependents=${BUILD_DEPENDENTS:-false}
     - -e registry_user=${CI_REGISTRY_USER} -e registry_token=${CI_REGISTRY_TOKEN} -e registry=${CI_REGISTRY}
     - -e github_ref=${GITHUB_REF}
+    - -e github_pat=${CI_PAT}
 
   playbooks:
     create: ../__shared_playbooks/create.yml
