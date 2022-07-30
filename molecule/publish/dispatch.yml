@@ -28,7 +28,7 @@
           ref: "{{ github_ref }}"
           inputs:
             os: "{{ os }}"
-            flavor: "{{ flavor }}"
+            flavor: "{{ item }}"
             build_dependents: "true"
       register: _api_call
       loop: "{{ images[os][flavor] }}"
