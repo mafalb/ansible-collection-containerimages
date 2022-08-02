@@ -64,15 +64,18 @@ jobs:
           while read item
           do
             item=$(echo ${item}|base64 --decode)
-            echo $item|jq '.os'
-            echo "{CI_NAME}={$(echo $item|jq '.os')}" >>GITHUB_ENV
-            echo "{FLAVOR}={$(echo $item|jq '.flavor')}" >>GITHUB_ENV
-            echo "{BASE_IMAGE}={$(echo $item|jq '.base_image')}" >>GITHUB_ENV
+            OS=$(echo $item|jq '.os')
+            FLAVOR=$(echo $item|jq '.flavor')
+            BASE_IMAGE=$(echo $item|jq '.base_image')
+            echo "{OS}={$OS}" >>GITHUB_ENV
+            echo "{FLAVOR}={$FLAVOR)}" >>GITHUB_ENV
+            echo "{BASE_IMAGE}={$BASE_IMAGE}" >>GITHUB_ENV
           done < <(cat imagetree.yml|python3 yaml2json.py|jq -r '.images["centos7"][] | @base64')
 
       - name: loop through all images for that os
         run: |
           echo $CI_NAME
+          echo $OS
           echo $FLAVOR
           echo $BASE_IMAGE
 
