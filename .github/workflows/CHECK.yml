@@ -57,11 +57,11 @@ jobs:
         run: |
           make tools
 
-      - name: loop through all images for that os
+      - name: loop through images and test
         run: |
           while read item
           do
-            loop = 1
+            loop=1
             item=$(echo ${item}|base64 --decode)
             export FLAVOR=$(echo $item|jq -r '.flavor')
             export BASE_IMAGE=$(echo $item|jq -r '.base_image')
