@@ -47,7 +47,7 @@ jobs:
 
       - name: pull parent container
         run: |
-          item=$(cat imagetree.yml|python3 yaml2json.py|jq -r '.images["$CI_NAME"][]|select(.flavor=="$FLAVOR")')
+          item=$(cat imagetree.yml|python3 yaml2json.py|jq -r '.images["${{ github.event.inputs.os }}"][]|select(.flavor=="${{ github.event.inputs.flavor }}")')
           echo $item
           _OS=$(echo $item|jq -r '.os')
           echo $_OS
