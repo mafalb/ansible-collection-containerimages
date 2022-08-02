@@ -38,6 +38,7 @@ jobs:
         os: ${{fromJSON(needs.job_set_matrix.outputs.matrix)}}
 
     env:
+      CI_NAME: "{{ matrix.os }}"
       CI_REGISTRY: "ghcr.io"
       PY_COLORS: 1
       ANSIBLE_FORCE_COLOR: 1
@@ -62,8 +63,6 @@ jobs:
           while read item
           do
             item=$(echo ${item}|base64 --decode)
-            echo "CI_NAME=$(echo $item|jq -r '.os')" >>$GITHUB_ENV
-            export OS=$(echo $item|jq -r '.os')
             export FLAVOR=$(echo $item|jq -r '.flavor')
             export BASE_IMAGE=$(echo $item|jq -r '.base_image')
 
@@ -73,16 +72,9 @@ jobs:
             podman inspect ghcr.io/${{ github.actor }}/${OS}-${FLAVOR}:latest
             
             source ~/.virtualenvs/ci-tools/bin/activate
-            molecule test -s check
+            molecule test -s check --platform-name ci-${FLAVOR}
 
-          done < <(cat imagetree.yml|python3 yaml2json.py|jq -r '.images["centos7"][] | @base64')
-
-      - name: loop through all images for that os
-        run: |
-          echo $CI_NAME
-          echo $OS
-          echo $FLAVOR
-          echo $BASE_IMAGE
+          done < <(cat imagetree.yml|python3 yaml2json.py|jq -r '.images["$CI_NAME"][] | @base64')
 
       - name: pull container images
         if: false
