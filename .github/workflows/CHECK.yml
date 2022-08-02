@@ -27,18 +27,17 @@ jobs:
     outputs:
           matrix: ${{ steps.step_set_matrix.outputs.matrix }}
 
-  build_image:
+  build_images:
     needs: job_set_matrix
     runs-on: ubuntu-20.04
 
     strategy:
       fail-fast: false
-
       matrix: 
         os: ${{fromJSON(needs.job_set_matrix.outputs.matrix)}}
 
     env:
-      CI_NAME: "${{ matrix.os }}"
+      CI_NAME: ${{ matrix.os }}
       CI_REGISTRY: "ghcr.io"
       PY_COLORS: 1
       ANSIBLE_FORCE_COLOR: 1
@@ -75,7 +74,7 @@ jobs:
             source ~/.virtualenvs/ci-tools/bin/activate
             molecule test -s check --platform-name ci-${FLAVOR}
 
-          done < <(cat imagetree.yml|python3 yaml2json.py|jq -r '.images["$CI_NAME"][] | @base64')
+          done < <(cat imagetree.yml|python3 yaml2json.py|jq -r '.images["${{ matrix.os }}"][] | @base64')
 
       - name: pull container images
         if: false
