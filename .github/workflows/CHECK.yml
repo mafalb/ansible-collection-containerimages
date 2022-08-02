@@ -68,9 +68,9 @@ jobs:
             export BASE_IMAGE=$(echo $item|jq -r '.base_image')
 
             podman login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
-            podman pull ghcr.io/${{ github.actor }}/${{ OS }}-${{ FLAVOR }}:latest
+            podman pull ghcr.io/${{ github.actor }}/${OS}-${FLAVOR}:latest
             podman images
-            podman inspect ghcr.io/${{ github.actor }}/${{ matrix.os }}-${{ matrix.flavor }}:latest
+            podman inspect ghcr.io/${{ github.actor }}/${OS}-${FLAVOR}:latest
             
             source ~/.virtualenvs/ci-tools/bin/activate
             molecule test -s check
