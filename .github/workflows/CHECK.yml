@@ -63,6 +63,7 @@ jobs:
           while read item
           do
             item=$(echo ${item}|base64 --decode)
+            test echo $item|jq -r '.os' = $CI_NAME
             export FLAVOR=$(echo $item|jq -r '.flavor')
             export BASE_IMAGE=$(echo $item|jq -r '.base_image')
 
