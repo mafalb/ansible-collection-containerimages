@@ -65,7 +65,16 @@ jobs:
           do
             item=$(echo ${item}|base64 --decode)
             echo $item|jq '.os'
+            echo ::set-env name=CI_NAME::$(echo $item|jq '.os')
+            echo ::set-env name=FLAVOR::$(echo $item|jq '.flavor')
+            echo ::set-env name=BASE_IMAGE::$(echo $item|jq '.base_image')
           done < <(cat imagetree.yml|python3 yaml2json.py|jq -r '.images["centos7"][] | @base64')
+
+      - name: loop through all images for that os
+        run: |
+          echo $OS
+          echo $FLAVOR
+          echo $BASE_IMAGE
 
       - name: pull container images
         if: false
