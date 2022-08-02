@@ -24,7 +24,7 @@ jobs:
     env:
       BUILD_DEPENDENTS: "${{ github.event.inputs.build_dependents }}"
       CI_NAME: "${{ github.event.inputs.os }}"
-      CI_FLAVOR: "${{ github.event.inputs.flavor }}"
+      FLAVOR: "${{ github.event.inputs.flavor }}"
       CI_TARGET: "${{ github.event.inputs.os }}-${{ github.event.inputs.flavor }}"
       CI_REGISTRY_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
       CI_REGISTRY_USER: "${{ github.actor }}"
@@ -45,6 +45,26 @@ jobs:
         with:
           path: ansible_collections/mafalb/containerimages
 
+      - name: pull parent container
+        run: |
+          item=$(cat imagetree.yml|python3 yaml2json.py|jq -r '.images["$CI_NAME"][]|select(.flavor=="$FLAVOR")')
+          _OS=$(echo $item|jq -r '.os')
+          _FLAVOR=$(echo $item|jq -r '.flavor')
+          BASE_IMAGE=$(echo $item|jq -r '.base_image')
+          PARENT=$(echo $item|jq -r '.parent')
+          
+          # assertions
+          test "$_OS" = "$CI_NAME"
+          test "$_FLAVOR" = "$FLAVOR"
+
+          if test -n "$PARENT"
+          then
+            PARENT_IMAGE="${CI_REGISTRY}/${{ github.actor }}/${CI_NAME}-${PARENT}:latest"
+            podman login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
+            podman pull ${CI_REGISTRY}/${{ github.actor }}/${CI_NAME}-${PARENT}:latest
+            podman tag ${CI_REGISTRY}/${{ github.actor }}/${CI_NAME}-${PARENT}:latest localhost/${{ github.actor }}/${CI_NAME}-${PARENT}
+          fi
+
       - name: install necessary tools into a python virtualenv
         run: |
           make tools
@@ -63,7 +83,7 @@ jobs:
       - name: run tests and push image
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
-          CI_IMAGE=localhost/mafalb/$CI_TARGET molecule test -s publish --platform-name ci-$CI_FLAVOR
+          CI_IMAGE=localhost/mafalb/$CI_TARGET molecule test -s publish --platform-name ci-$FLAVOR
 
       - name: push image
         if: false

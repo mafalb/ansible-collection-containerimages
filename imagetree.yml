@@ -7,11 +7,17 @@ images:
     - os: centos7
       flavor: base
       base_image: quay.io/centos/centos:centos7
+      children:
+        - systemd
     - os: centos7
       flavor: systemd
+      parent: base
   fedora36:
     - os: fedora36
       flavor: base
       base_image: registry.fedoraproject.org/fedora:36
+      children:
+        - systemd
     - flavor: systemd
+      parent: base
 ...
