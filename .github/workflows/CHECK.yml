@@ -61,8 +61,8 @@ jobs:
         run: |
           while read item
           do
+            loop = 1
             item=$(echo ${item}|base64 --decode)
-            test echo $item|jq -r '.os' = $CI_NAME
             export FLAVOR=$(echo $item|jq -r '.flavor')
             export BASE_IMAGE=$(echo $item|jq -r '.base_image')
 
@@ -75,6 +75,8 @@ jobs:
             molecule test -s check --platform-name ci-${FLAVOR}
 
           done < <(cat imagetree.yml|python3 yaml2json.py|jq -r '.images["${{ matrix.os }}"][] | @base64')
+          test echo $item|jq -r '.os' = $CI_NAME
+          test loop = 1
 
       - name: pull container images
         if: false
