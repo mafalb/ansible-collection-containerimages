@@ -66,11 +66,16 @@ jobs:
             export FLAVOR=$(echo $item|jq -r '.flavor')
             export BASE_IMAGE=$(echo $item|jq -r '.base_image')
 
+            echo "# podman login"
             podman login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
-            podman pull ghcr.io/${{ github.actor }}/${OS}-${FLAVOR}:latest
+            echo "# podman pull"
+            podman pull ghcr.io/${{ github.actor }}/${CI_NAME}-${FLAVOR}:latest
+            echo "# podman images"
             podman images
-            podman inspect ghcr.io/${{ github.actor }}/${OS}-${FLAVOR}:latest
+            echo "# podman inspect"
+            podman inspect ghcr.io/${{ github.actor }}/${CI_NAME}-${FLAVOR}:latest
             
+            echo "# molecule"
             source ~/.virtualenvs/ci-tools/bin/activate
             molecule test -s check --platform-name ci-${FLAVOR}
 

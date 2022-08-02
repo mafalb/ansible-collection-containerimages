@@ -47,7 +47,7 @@ provisioner:
   ansible_args:
     - --tags=all,debug
     - --diff
-    - -e os=${OS} -e flavor=${FLAVOR} -e build_dependents=${BUILD_DEPENDENTS:-false}
+    - -e os=${CI_NAME} -e flavor=${FLAVOR} -e build_dependents=${BUILD_DEPENDENTS:-false}
     - -e github_ref=${GITHUB_REF}
 
   playbooks:
