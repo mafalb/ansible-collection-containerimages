@@ -39,7 +39,6 @@ jobs:
         os: ${{fromJSON(needs.job_set_matrix.outputs.matrix)}}
 
     env:
-      CI_NAME: "${{ matrix.os }}"
       CI_REGISTRY: "ghcr.io"
       PY_COLORS: 1
       ANSIBLE_FORCE_COLOR: 1
@@ -64,11 +63,19 @@ jobs:
           while read item
           do
             item=$(echo ${item}|base64 --decode)
-            echo 'OS<<EOF' >>$GITHUB_ENV
-            echo $item|jq -r '.os' >>$GITHUB_ENV
-            echo 'EOF' >>$GITHUB_ENV
-            echo "FLAVOR=$(echo $item|jq -r '.flavor')" >>$GITHUB_ENV
-            echo "BASE_IMAGE=$(echo $item|jq -r '.base_image')" >>$GITHUB_ENV
+            echo "CI_NAME=$(echo $item|jq -r '.os')" >>$GITHUB_ENV
+            export OS=$(echo $item|jq -r '.os')
+            export FLAVOR=$(echo $item|jq -r '.flavor')
+            export BASE_IMAGE=$(echo $item|jq -r '.base_image')
+
+            podman login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
+            podman pull ghcr.io/${{ github.actor }}/${{ OS }}-${{ FLAVOR }}:latest
+            podman images
+            podman inspect ghcr.io/${{ github.actor }}/${{ matrix.os }}-${{ matrix.flavor }}:latest
+            
+            source ~/.virtualenvs/ci-tools/bin/activate
+            molecule test -s check
+
           done < <(cat imagetree.yml|python3 yaml2json.py|jq -r '.images["centos7"][] | @base64')
 
       - name: loop through all images for that os
@@ -90,10 +97,10 @@ jobs:
           podman images
           podman inspect ghcr.io/${{ github.actor }}/${{ matrix.os }}-${{ matrix.flavor }}:latest
 
-      - name: verify image
+      - name: verify images
         if: false
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
-          molecule test -s check --platform-name ci-${{ matrix.flavor }}
+          molecule test -s check
 
 ...
