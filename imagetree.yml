@@ -2,15 +2,16 @@
 # GNU General Public License v3.0+
 # see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
 ---
-
 images:
   centos7:
-    base:
-      - systemd
-    systemd: []
+    - os: centos7
+      flavor: base
+      base_image: quay.io/centos/centos:centos7
+    - os: centos7
+      flavor: systemd
   fedora36:
-    base:
-      - systemd
-    systemd: [] 
-
+    - os: fedora36
+      flavor: base
+      base_image: registry.fedoraproject.org/fedora:36
+    - flavor: systemd
 ...
