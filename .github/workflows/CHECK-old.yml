@@ -1,35 +1,32 @@
 # vim: set ft=yaml ts=2 expandtab:
 ---
 
-name: CHECK
+name: CHECK-old
 
 on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
-  schedule:
-    - cron: '40 15 * * 6'
+#  schedule:
+#    - cron: '40 15 * * 6'
 
 jobs:
 
-  job_set_matrix:
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Generate Matrix
-        id: step_set_matrix
-        run: |
-          echo ::set-output name=matrix::$(cat imagetree.yml | python yaml2json.py|jq '[.images|to_entries[].key]')
-    outputs:
-          matrix: ${{ steps.step_set_matrix.outputs.matrix }}
-
   build_image:
-    needs: job_set_matrix
+
     runs-on: ubuntu-20.04
 
     strategy:
       fail-fast: false
       max-parallel: 1
 
-      matrix: 
-        os: ${{fromJSON(needs.job_set_matrix.outputs.matrix)}}
+      matrix:
+
+        flavor:
+          - base
+          - systemd
+
+        os:
+          - centos7
+          - fedora36
 
     env:
       CI_NAME: "${{ matrix.os }}"
@@ -48,32 +45,21 @@ jobs:
         with:
           path: ansible_collections/mafalb/containerimages
 
-      - name: install necessary tools into a python virtualenv
-        run: |
-          make tools
-
-      - name: loop through all images for that os
-        run: |
-          while read item
-          do
-            item=$(echo ${item}|base64 --decode)
-            echo $item|jq '.os'
-          done < <(cat imagetree.yml|python3 yaml2json.py|jq -r '.images["centos7"][] | @base64')
-
       - name: pull container images
-        if: false
         run: |
           podman login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
           podman pull ghcr.io/${{ github.actor }}/${{ matrix.os }}-${{ matrix.flavor }}:latest
 
+      - name: install necessary tools into a python virtualenv
+        run: |
+          make tools
+
       - name: debug
-        if: false
         run: |
           podman images
           podman inspect ghcr.io/${{ github.actor }}/${{ matrix.os }}-${{ matrix.flavor }}:latest
 
       - name: verify image
-        if: false
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
           molecule test -s check --platform-name ci-${{ matrix.flavor }}
