@@ -11,7 +11,7 @@
     - name: dispatch all childs
       debug:
         msg: "dispatch {{ os }}-{{ item }}"
-      loop: "{{ images[os][flavor] }}"
+      loop: "{{ (images[os]|selectattr('flavor', 'equalto', flavor))[0]['children']|default([]) }}"
       when:
         - build_dependents
 
@@ -31,7 +31,7 @@
             flavor: "{{ item }}"
             build_dependents: "true"
       register: _api_call
-      loop: "{{ images[os][flavor] }}"
+      loop: "{{ (images[os]|selectattr('flavor', 'equalto', flavor))[0]['children']|default([]) }}"
       when:
         - build_dependents
         - "lookup('env','GITHUB_ACTIONS',default='false')"

@@ -67,6 +67,7 @@ jobs:
             podman pull ${CI_REGISTRY}/${{ github.actor }}/${CI_NAME}-${PARENT}:latest
             podman tag ${CI_REGISTRY}/${{ github.actor }}/${CI_NAME}-${PARENT}:latest localhost/${{ github.actor }}/${CI_NAME}-${PARENT}
           fi
+          podman images
 
       - name: install necessary tools into a python virtualenv
         run: |
