@@ -48,10 +48,13 @@ jobs:
       - name: pull parent container
         run: |
           item=$(cat imagetree.yml|python3 yaml2json.py|jq -r '.images["$CI_NAME"][]|select(.flavor=="$FLAVOR")')
+          echo $item
           _OS=$(echo $item|jq -r '.os')
+          echo $_OS
           _FLAVOR=$(echo $item|jq -r '.flavor')
-          BASE_IMAGE=$(echo $item|jq -r '.base_image')
+          echo $_FLAVOR
           PARENT=$(echo $item|jq -r '.parent')
+          echo $PARENT
           
           # assertions
           test "$_OS" = "$CI_NAME"
