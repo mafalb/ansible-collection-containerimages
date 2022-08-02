@@ -38,7 +38,7 @@ jobs:
         os: ${{fromJSON(needs.job_set_matrix.outputs.matrix)}}
 
     env:
-      CI_NAME: "{{ matrix.os }}"
+      CI_NAME: "${{ matrix.os }}"
       CI_REGISTRY: "ghcr.io"
       PY_COLORS: 1
       ANSIBLE_FORCE_COLOR: 1
