@@ -67,7 +67,7 @@ jobs:
             OS=$(echo $item|jq '.os')
             FLAVOR=$(echo $item|jq '.flavor')
             BASE_IMAGE=$(echo $item|jq '.base_image')
-            echo 'OS<<EOF' >>GITHUB_ENV
+            echo 'OS<<EOF' >>$GITHUB_ENV
             echo $item|jq '.os' >>$GITHUB_ENV
             echo 'EOF' >>$GITHUB_ENV
             echo "{FLAVOR}=$(echo $item|jq '.flavor')" >>$GITHUB_ENV
