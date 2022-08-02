@@ -66,20 +66,29 @@ jobs:
             export FLAVOR=$(echo $item|jq -r '.flavor')
             export BASE_IMAGE=$(echo $item|jq -r '.base_image')
 
-            echo "# podman login"
+            echo
+            echo "# podman login $FLAVOR"
             podman login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
-            echo "# podman pull"
+
+            echo
+            echo "# podman pull $FLAVOR"
             podman pull ghcr.io/${{ github.actor }}/${CI_NAME}-${FLAVOR}:latest
-            echo "# podman images"
+
+            echo
+            echo "# podman images $FLAVOR"
             podman images
-            echo "# podman inspect"
+
+            echo
+            echo "# podman inspect $FLAVOR"
             podman inspect ghcr.io/${{ github.actor }}/${CI_NAME}-${FLAVOR}:latest
-            
-            echo "# molecule"
+
+            echo
+            echo "# molecule $FLAVOR"
             source ~/.virtualenvs/ci-tools/bin/activate
             molecule test -s check --platform-name ci-${FLAVOR}
 
           done < <(cat imagetree.yml|python3 yaml2json.py|jq -r '.images["${{ matrix.os }}"][] | @base64')
+
           test echo $item|jq -r '.os' = $CI_NAME
           test loop = 1
 
