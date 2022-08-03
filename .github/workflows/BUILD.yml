@@ -82,7 +82,7 @@ jobs:
       - name: build dependent images
         #if: ${{ github.event.inputs.build_dependents }}
         run: |
-          function get_children(flavor) {
+          function get_children() {
             local flavor=$1
             local __children=$(cat imagetree.yml|python3 yaml2json.py|jq -r ".images[${{ github.event.inputs.os }}][]|select(.flavor==\"$flavor\")|.children|@sh"|sed "s/'//g")
           	if test "$__children" = "null"
