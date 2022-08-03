@@ -80,8 +80,9 @@ jobs:
           make $CI_TARGET
 
       - name: build dependent images
-        #if: ${{ github.event.inputs.build_dependents }}
+        if: ${{ github.event.inputs.build_dependents }}
         run: |
+          echo "::group::Get data about child images"
           function get_children() {
             local flavor=$1
             local __children=$(cat imagetree.yml|python3 yaml2json.py|jq -r ".images[\"${{ github.event.inputs.os }}\"][]|select(.flavor==\"$flavor\")|.children|@sh"|sed "s/'//g")
@@ -101,22 +102,37 @@ jobs:
 
           children=$(get_children ${{ github.event.inputs.flavor }})
           echo $children
+          echo "::endgroup::"
+          
+          source ~/.virtualenvs/ci-tools/bin/activate
+
+          for child in $children
+          do
+            echo "::group::build $child"
+            make ${{ github.event.inputs.os }}-$child
+            echo "::endgroup"
+          done
+
+          echo "children=$children" >>$GITHUB_ENV
 
       - name: debug
         run: |
           podman images
-          podman inspect localhost/mafalb/$CI_TARGET
+          for child in $children
+          do
+            echo "::group::debug for $child"
+            podman inspect localhost/mafalb/${CI_NAME}-$child
+            echo "::endgroup"
+          done
 
       - name: run tests and push image
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
-          CI_IMAGE=localhost/mafalb/$CI_TARGET molecule test -s publish --platform-name ci-$FLAVOR
-
-      - name: push image
-        if: false
-        run: |
-          podman login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
-          source ~/.virtualenvs/ci-tools/bin/activate
-          ansible-bender push ghcr.io/${{ github.actor }}/$CI_TARGET
+          for child in $children
+          do
+            echo "::group::test ${CI_NAME}-$child"
+            CI_IMAGE=localhost/mafalb/${CI_NAME}-$child molecule test -s publish --platform-name ci-$child
+            echo "::endgroup"
+          done
 
 ...
