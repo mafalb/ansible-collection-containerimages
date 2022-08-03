@@ -12,6 +12,16 @@ images:
     - os: centos7
       flavor: systemd
       parent: base
+      children:
+        - molecule
+        - molecule2
+    - os: centos7
+      flavor: molecule
+      parent: systemd
+    - os: centos7
+      flavor: molecule2
+      parent: systemd
+      
   fedora36:
     - os: fedora36
       flavor: base

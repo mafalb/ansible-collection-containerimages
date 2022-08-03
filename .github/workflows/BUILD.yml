@@ -79,6 +79,29 @@ jobs:
           make deps
           make $CI_TARGET
 
+      - name: build dependent images
+        #if: ${{ github.event.inputs.build_dependents }}
+        run: |
+          function get_children(flavor) {
+            local flavor=$1
+            local __children=$(cat imagetree.yml|python3 yaml2json.py|jq -r ".images[${{ github.event.inputs.os }}][]|select(.flavor==\"$flavor\")|.children|@sh"|sed "s/'//g")
+          	if test "$__children" = "null"
+          	then
+          		__children=""
+          	fi
+          	if test -n "$__children"
+          	then
+          		for child in "$__children"
+          		do
+          			__children="$__children $(get_children $child)"
+          		done
+          	fi
+          	echo "$__children"
+          }
+
+          children=$(get_children ${{ github.event.inputs.flavor }})
+          echo $children
+
       - name: debug
         run: |
           podman images
