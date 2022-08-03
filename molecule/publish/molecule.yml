@@ -75,7 +75,7 @@ scenario:
   - side_effect
   - verify
   - side_effect publish.yml
-  - side_effect dispatch.yml
+ # - side_effect dispatch.yml
   - cleanup
   - destroy
 
