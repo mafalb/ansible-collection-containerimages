@@ -53,7 +53,7 @@ jobs:
           echo $_OS
           _FLAVOR=$(echo $item|jq -r '.flavor')
           echo $_FLAVOR
-          PARENT=$(echo $item|jq -r '.parent')
+          PARENT=$(echo $item|jq -r '.parent'|sed 's/null//')
           echo $PARENT
           
           # assertions
