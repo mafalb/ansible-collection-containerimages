@@ -1,7 +1,9 @@
 #!/bin/python3
 
+
 def yaml_to_json():
     json.dump(data, sys.stdout)
+
 
 def list_os():
     if arguments.json:
@@ -10,10 +12,12 @@ def list_os():
         for os in data["images"].keys():
             print(os)
 
+
 def get_children(os, flavor):
     children = __get_children(os, flavor)
     for child in children:
         print(child)
+
 
 def __get_children(os, flavor):
     children = []
@@ -23,9 +27,9 @@ def __get_children(os, flavor):
     if ('children' in __data.keys()):
         for child in __data['children']:
             children.append(child)
-            bla=__get_children(os, child)
             children.extend(__get_children(os, child))
     return children
+
 
 def get_parentimage(os, flavor):
     __parentdata = {}
@@ -45,6 +49,7 @@ def get_parentimage(os, flavor):
     else:
         print("None")
 
+
 def get_parent(os, flavor):
     for __flavor in data['images'][os]:
         if (__flavor['flavor'] == flavor):
@@ -53,14 +58,8 @@ def get_parent(os, flavor):
         print(__data['parent'])
     else:
         print('None')
-    
-#    data=data['images'][os]
-#    print(data['images'][os][flavor]['children'])
-#    if (data['images'][os][flavor]['children']):
-#        children = data['images'][os][flavor]['children']
 
-#    print(children)
-    
+
 if __name__ == '__main__':
     import sys
     import yaml
@@ -68,27 +67,26 @@ if __name__ == '__main__':
     import argparse
 
     # Initialize parser
-    parser = argparse.ArgumentParser(description = 'containerimages')
+    parser = argparse.ArgumentParser(description='containerimages')
 
     # Adding optional argument
-    parser.add_argument("-f", "--file", help = "use file as input", default = sys.stdin)
+    parser.add_argument("-f", "--file", help="use file as input", default=sys.stdin)
     parser.add_argument("action")
     parser.add_argument("--os", default=None)
     parser.add_argument("--flavor", default=None)
     parser.add_argument("--json", action='store_true')
 
-    arguments=parser.parse_args()
-#    print(arguments)
+    arguments = parser.parse_args()
 
     data = yaml.load(arguments.file, Loader=yaml.Loader)
 
     if arguments.action == 'yaml2json':
         yaml_to_json()
-    elif arguments.action =='listos':
+    elif arguments.action == 'listos':
         list_os()
-    elif arguments.action =='children':
+    elif arguments.action == 'children':
         get_children(arguments.os, arguments.flavor)
-    elif arguments.action =='parentimage':
+    elif arguments.action == 'parentimage':
         get_parentimage(arguments.os, arguments.flavor)
     elif arguments.action == 'parent':
         get_parent(arguments.os, arguments.flavor)
