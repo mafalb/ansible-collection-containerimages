@@ -23,7 +23,7 @@ jobs:
       - name: Generate Matrix
         id: step_set_matrix
         run: |
-          echo ::set-output name=matrix::$(cat imagetree.yml | python yaml2json.py|jq '[.images|to_entries[].key]')
+          echo ::set-output name=matrix::$(cat imagetree.yml | python bin/containerimages.py listos --json')
     outputs:
           matrix: ${{ steps.step_set_matrix.outputs.matrix }}
 

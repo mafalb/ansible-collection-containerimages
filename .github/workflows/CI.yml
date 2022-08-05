@@ -56,6 +56,10 @@ jobs:
           ansible-lint --version
           . tests/lint.sh requirements
 
+      - name: test containerimages script
+        run: |
+          bash tests/containerimages.sh
+
       - name: build base image
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate

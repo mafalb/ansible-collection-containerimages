@@ -12,6 +12,15 @@ images:
     - os: centos7
       flavor: systemd
       parent: base
+      children:
+        - bla1
+        - bla2
+    - os: centos7
+      flavor: bla1
+      parent: systemd
+    - os: centos7
+      flavor: bla2
+      parent: systemd
       
   fedora36:
     - os: fedora36
