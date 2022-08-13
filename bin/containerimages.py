@@ -24,12 +24,13 @@ def get_attribute(os, flavor, attribute):
             __data = __flavor
     if (attribute in __data.keys()):
         print(__data[attribute])
-    
+
 
 def get_children(os, flavor):
     children = __get_children(os, flavor)
     for child in children:
         print(child)
+
 
 def __get_children(os, flavor):
     children = []
