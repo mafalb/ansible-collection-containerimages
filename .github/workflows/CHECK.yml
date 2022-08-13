@@ -97,7 +97,8 @@ jobs:
           done < <(cat imagetree.yml|python3 yaml2json.py|jq -r '.images["${{ matrix.os }}"][] | @base64')
 
           # assertions
-          test "$(echo $item|jq -r '.os')" = $CI_NAME
+          set -x
+          test "$(echo $item|jq -r '.os')" = "${CI_NAME}"
           test "$loop" = 1
 
 ...
