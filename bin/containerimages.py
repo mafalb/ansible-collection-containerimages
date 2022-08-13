@@ -13,11 +13,23 @@ def list_os():
             print(os)
 
 
+def list_images(os):
+    for image in data["images"][os]:
+        print(image['flavor'])
+
+
+def get_attribute(os, flavor, attribute):
+    for __flavor in data['images'][os]:
+        if (__flavor['flavor'] == flavor):
+            __data = __flavor
+    if (attribute in __data.keys()):
+        print(__data[attribute])
+    
+
 def get_children(os, flavor):
     children = __get_children(os, flavor)
     for child in children:
         print(child)
-
 
 def __get_children(os, flavor):
     children = []
@@ -75,6 +87,7 @@ if __name__ == '__main__':
     parser.add_argument("--os", default=None)
     parser.add_argument("--flavor", default=None)
     parser.add_argument("--json", action='store_true')
+    parser.add_argument("--attribute")
 
     arguments = parser.parse_args()
 
@@ -84,9 +97,13 @@ if __name__ == '__main__':
         yaml_to_json()
     elif arguments.action == 'listos':
         list_os()
+    elif arguments.action == 'listimages':
+        list_images(arguments.os)
     elif arguments.action == 'children':
         get_children(arguments.os, arguments.flavor)
     elif arguments.action == 'parentimage':
         get_parentimage(arguments.os, arguments.flavor)
     elif arguments.action == 'parent':
         get_parent(arguments.os, arguments.flavor)
+    elif arguments.action == 'attribute':
+        get_attribute(arguments.os, arguments.flavor, arguments.attribute)

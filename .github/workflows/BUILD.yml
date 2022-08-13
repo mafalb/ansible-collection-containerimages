@@ -102,6 +102,9 @@ jobs:
       - name: run tests and push image
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
+          echo "::group::test ${CI_NAME}-$FLAVOR"
+          CI_IMAGE=localhost/mafalb/${CI_NAME}-$FLAVOR molecule test -s publish --platform-name ci-$FLAVOR
+          echo "::endgroup"
           for child in $children
           do
             echo "::group::test ${CI_NAME}-$child"

@@ -23,7 +23,7 @@ jobs:
       - name: Generate Matrix
         id: step_set_matrix
         run: |
-          echo ::set-output name=matrix::$(cat imagetree.yml | python bin/containerimages.py listos --json')
+          echo ::set-output name=matrix::$(cat imagetree.yml | python bin/containerimages.py listos --json)
     outputs:
           matrix: ${{ steps.step_set_matrix.outputs.matrix }}
 
@@ -59,13 +59,17 @@ jobs:
 
       - name: loop through images and test
         run: |
+          IMAGES=(cat imagetree.yml | python bin/containerimages.py listimages --os $CI_NAME)          
+
           while read item
           do
             loop=1
+            
             item=$(echo ${item}|base64 --decode)
             export FLAVOR=$(echo $item|jq -r '.flavor')
             export BASE_IMAGE=$(echo $item|jq -r '.base_image')
 
+            echo "::group::pull image ${CI_NAME}-$FLAVOR"
             echo
             echo "# podman login $FLAVOR"
             podman login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
@@ -81,33 +85,19 @@ jobs:
             echo
             echo "# podman inspect $FLAVOR"
             podman inspect ghcr.io/${{ github.actor }}/${CI_NAME}-${FLAVOR}:latest
+            echo "::endgroup"
 
+            echo "::group::test image ${CI_NAME}-$FLAVOR"
             echo
             echo "# molecule $FLAVOR"
             source ~/.virtualenvs/ci-tools/bin/activate
             molecule test -s check --platform-name ci-${FLAVOR}
+            echo "::endgroup"
 
           done < <(cat imagetree.yml|python3 yaml2json.py|jq -r '.images["${{ matrix.os }}"][] | @base64')
 
+          # assertions
           test echo $item|jq -r '.os' = $CI_NAME
           test loop = 1
-
-      - name: pull container images
-        if: false
-        run: |
-          podman login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
-          podman pull ghcr.io/${{ github.actor }}/${{ matrix.os }}-${{ matrix.flavor }}:latest
-
-      - name: debug
-        if: false
-        run: |
-          podman images
-          podman inspect ghcr.io/${{ github.actor }}/${{ matrix.os }}-${{ matrix.flavor }}:latest
-
-      - name: verify images
-        if: false
-        run: |
-          source ~/.virtualenvs/ci-tools/bin/activate
-          molecule test -s check
 
 ...

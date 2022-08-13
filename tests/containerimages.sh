@@ -25,3 +25,8 @@ cat tests/imagetree.yml|python3 bin/containerimages.py parent --os centos7 --fla
 
 cat tests/imagetree.yml|python3 bin/containerimages.py listos|grep centos7
 cat tests/imagetree.yml|python3 bin/containerimages.py listos|grep fedora36
+
+
+cat tests/imagetree.yml|python3 bin/containerimages.py attribute --os centos7 --flavor systemd --attribute flavor|grep systemd
+cat tests/imagetree.yml|python3 bin/containerimages.py attribute --os centos7 --flavor systemd --attribute os|grep centos7
+cat tests/imagetree.yml|python3 bin/containerimages.py attribute --os centos7 --flavor base --attribute base_image|grep quay
