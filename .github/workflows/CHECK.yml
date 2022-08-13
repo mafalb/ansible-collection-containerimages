@@ -39,6 +39,7 @@ jobs:
     env:
       CI_NAME: ${{ matrix.os }}
       CI_REGISTRY: "ghcr.io"
+      CI_PAT: "${{ secrets.PAT }}"
       PY_COLORS: 1
       ANSIBLE_FORCE_COLOR: 1
 

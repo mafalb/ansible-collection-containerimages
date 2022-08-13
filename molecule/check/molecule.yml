@@ -49,6 +49,7 @@ provisioner:
     - --diff
     - -e os=${CI_NAME} -e flavor=${FLAVOR} -e build_dependents=${BUILD_DEPENDENTS:-false}
     - -e github_ref=${GITHUB_REF}
+    - -e github_pat=${CI_PAT}
 
   playbooks:
     create: ../__shared_playbooks/create.yml
