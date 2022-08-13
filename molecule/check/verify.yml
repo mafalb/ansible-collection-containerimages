@@ -37,9 +37,9 @@
             os: "{{ os }}"
             flavor: "{{ flavor }}"
             build_dependents: "true"
-      loop: "{{ images[os][flavor] }}"
+#      loop: "{{ images[os][flavor] }}"
       when:
-        - build_dependents
+#        - build_dependents
         - "lookup('env','GITHUB_ACTIONS',default='false')"
 
   tasks:
