@@ -94,11 +94,15 @@ jobs:
             molecule test -s check --platform-name ci-${FLAVOR}
             echo "::endgroup::"
 
+            # assertions
+            set -x
+            test "$(echo $item|jq -r '.os')" = "${CI_NAME}"
+
           done < <(cat imagetree.yml|python3 yaml2json.py|jq -r '.images["${{ matrix.os }}"][] | @base64')
 
           # assertions
           set -x
-          test "$(echo $item|jq -r '.os')" = "${CI_NAME}"
           test "$loop" = 1
+
 
 ...
