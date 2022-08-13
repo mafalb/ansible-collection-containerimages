@@ -59,7 +59,7 @@ jobs:
 
       - name: loop through images and test
         run: |
-          IMAGES=(cat imagetree.yml | python bin/containerimages.py listimages --os $CI_NAME)          
+          IMAGES=$(cat imagetree.yml | python bin/containerimages.py listimages --os $CI_NAME)          
 
           while read item
           do
