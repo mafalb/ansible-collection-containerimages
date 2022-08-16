@@ -38,4 +38,10 @@
     - name: debug
       debug: var=_push_output
 
+    - name: push the image  # noqa: no-changed-when
+      command: podman push localhost/{{ registry_user }}/{{ os }}-{{ flavor }}:latest {{ registry }}/{{ registry_user }}/{{ os }}-{{ flavor }}:latest
+      register: _push_output
+    - name: debug
+      debug: var=_push_output
+
 ... 
