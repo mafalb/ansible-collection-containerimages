@@ -5,6 +5,14 @@
 
 - name: publish the image
   hosts: localhost
+  vars:
+    container_tag: "\
+      {{ ansible_date_time.year }}\
+      {{ ansible_date_time.month }}\
+      {{ ansible_date_time.day }}-\
+      {{ ansible_date_time.hour }}\
+      {{ ansible_date_time.minute }}"
+
   tasks:
 
     - name: login to the registry
@@ -25,7 +33,13 @@
           dest: "{{ registry }}/{{ registry_user }}/{{ os }}-{{ flavor }}:latest"
 
     - name: push the image  # noqa: no-changed-when
-      command: ansible-bender push {{ registry }}/{{ registry_user }}/{{ os }}-{{ flavor }}
+      command: podman push localhost/{{ registry_user }}/{{ os }}-{{ flavor }}:latest {{ registry }}/{{ registry_user }}/{{ os }}-{{ flavor }}:{{ container_tag }}
+      register: _push_output
+    - name: debug
+      debug: var=_push_output
+
+    - name: push the image  # noqa: no-changed-when
+      command: podman push localhost/{{ registry_user }}/{{ os }}-{{ flavor }}:latest {{ registry }}/{{ registry_user }}/{{ os }}-{{ flavor }}:latest
       register: _push_output
     - name: debug
       debug: var=_push_output

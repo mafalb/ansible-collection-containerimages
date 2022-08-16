@@ -83,7 +83,7 @@ jobs:
           do
             echo "::group::build $child"
             make ${{ github.event.inputs.os }}-$child
-            echo "::endgroup"
+            echo "::endgroup::"
           done
 
           # make it available to subsequent steps
@@ -96,20 +96,17 @@ jobs:
           do
             echo "::group::debug for $child"
             podman inspect localhost/mafalb/${CI_NAME}-$child
-            echo "::endgroup"
+            echo "::endgroup::"
           done
 
       - name: run tests and push image
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
-          echo "::group::test ${CI_NAME}-$FLAVOR"
-          CI_IMAGE=localhost/mafalb/${CI_NAME}-$FLAVOR molecule test -s publish --platform-name ci-$FLAVOR
-          echo "::endgroup"
-          for child in $children
+          for FLAVOR in $FLAVOR $children
           do
-            echo "::group::test ${CI_NAME}-$child"
-            CI_IMAGE=localhost/mafalb/${CI_NAME}-$child molecule test -s publish --platform-name ci-$child
-            echo "::endgroup"
+            echo "::group::test ${CI_NAME}-$FLAVOR"
+            CI_IMAGE=localhost/mafalb/${CI_NAME}-$child molecule test -s publish --platform-name ci-$FLAVOR
+            echo "::endgroup::"
           done
 
 ...
