@@ -26,5 +26,8 @@
 
     - name: push the image  # noqa: no-changed-when
       command: ansible-bender push {{ registry }}/{{ registry_user }}/{{ os }}-{{ flavor }}
+      register: _push_output
+    - name: debug
+      debug: var=_push_output
 
 ... 

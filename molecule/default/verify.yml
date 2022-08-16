@@ -16,41 +16,19 @@
         name: sshd
         state: started
 
+
 - name: verify all
   hosts: ci_group
   order: sorted
   vars_files: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') + '/imagetree.yml' }}"
 
-  handlers:
-    - name: dispatch build
-      debug:
-        msg: dispatch {{ os }}-{{ flavor }}
-      when:
-        - github_workflow == 'CHECK'
-        - os is defined
-        - flavor is defined
-
-    - name: dispatch build of child
-      debug:
-        msg: dispatch {{ os }}-{{ flavor }}
-      when:
-        - github_workflow == 'BUILD'
-
   tasks:
-
     - name: all updates are installed  # noqa: package-latest
       ansible.builtin.package:
         name: '*'
         state: latest
       register: _updates
       check_mode: true
-      notify: dispatch build
-
-- name: verify all
-  hosts: ci_group
-  order: sorted
-  vars_files: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') + '/imagetree.yml' }}"
-  tasks:
     - name: assertions
       assert:
         msg: "Not all available updates are installed in this image"
