@@ -21,7 +21,6 @@
         password: "{{ registry_token }}"
         registry: "{{ registry }}"
 
-    - name: tag the image
     # does not work
     # https://github.com/containers/ansible-podman-collections/issues/218
     - name: push the image
@@ -34,7 +33,7 @@
           dest: "{{ registry }}/{{ registry_user }}/{{ os }}-{{ flavor }}:latest"
 
     - name: push the image  # noqa: no-changed-when
-      command: ansible-bender push {{ registry }}/{{ registry_user }}/{{ os }}-{{ flavor }}:{{ container_tag }}
+      command: podman push localhost/{{ registry_user }}/{{ os }}-{{ flavor }}:latest {{ registry }}/{{ registry_user }}/{{ os }}-{{ flavor }}:{{ container_tag }}
       register: _push_output
     - name: debug
       debug: var=_push_output
