@@ -2,7 +2,6 @@
 
 if __name__ == '__main__':
     import argparse
-    import yaml
 
     import os
     import sys
