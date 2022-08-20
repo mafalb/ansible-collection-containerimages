@@ -3,9 +3,9 @@
 if __name__ == '__main__':
     import argparse
 
-    import os
+    import os as os_module
     import sys
-    sys.path.append(os.path.join(os.path.dirname(__file__), '../plugins/module_utils/containerimages'))
+    sys.path.append(os_module.path.join(os_module.path.dirname(__file__), '../plugins/module_utils/containerimages'))
     import schema
 
     # Initialize parser
