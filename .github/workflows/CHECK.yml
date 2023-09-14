@@ -17,7 +17,7 @@ jobs:
         working-directory: ansible_collections/mafalb/containerimages
     steps:
       - name: checkout collection mafalb.containerimages
-        uses: actions/checkout
+        uses: actions/checkout@v4
         with:
           path: ansible_collections/mafalb/containerimages
       - name: Generate Matrix
@@ -50,7 +50,7 @@ jobs:
     steps:
 
       - name: checkout collection mafalb.containerimages
-        uses: actions/checkout
+        uses: actions/checkout@v4
         with:
           path: ansible_collections/mafalb/containerimages
 
