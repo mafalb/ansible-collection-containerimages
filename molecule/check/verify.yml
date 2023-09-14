@@ -29,7 +29,7 @@
         status_code: [204]
         headers:
           Accept: application/vnd.github.v3+json"
-          Authorization: token {{ github_pat }}
+          Authorization: token {{ github_ref }}
         body_format: json
         body:
           ref: "{{ github_ref }}"
