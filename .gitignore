@@ -1,4 +1,5 @@
-playbooks/collections
-tests/output/
+/playbooks/collections
+/tests/output/
+/tests/integration/inventory
 __pycache__/
 *.pyc

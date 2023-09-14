@@ -40,7 +40,7 @@ class Containerimages:
             return __data[attribute]
 
     def get_children(self, os, flavor):
-        """Helper function for get_children()."""
+        """Return a list of child images, i.e. dependent images."""
         children = []
         for __flavor in self.data['images'][os]:
             if (__flavor['flavor'] == flavor):

@@ -12,14 +12,14 @@ driver:
 platforms:
 
   - name: ci-base
-    image: localhost/mafalb/${CI_NAME}-base
+    image: localhost/${CI_NAME}-base
     pre_build_image: true
     groups:
       - ci_group
       - base_group
 
   - name: ci-systemd
-    image: localhost/mafalb/${CI_NAME}-systemd
+    image: localhost/${CI_NAME}-systemd
     pre_build_image: true
     command: /lib/systemd/systemd
     extra_opts:

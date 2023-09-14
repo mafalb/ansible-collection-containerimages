@@ -65,14 +65,14 @@ jobs:
           source ~/.virtualenvs/ci-tools/bin/activate
           make deps
           make ${{ matrix.os }}-base
-          podman inspect localhost/mafalb/${{ matrix.os }}-base
+          podman inspect localhost/${{ matrix.os }}-base
 
       - name: build systemd image
         run: |
           source ~/.virtualenvs/ci-tools/bin/activate
           make deps
           make ${{ matrix.os }}-systemd
-          podman inspect localhost/mafalb/${{ matrix.os }}-systemd
+          podman inspect localhost/${{ matrix.os }}-systemd
 
       - name: run tests
         run: |

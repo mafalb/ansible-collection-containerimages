@@ -55,7 +55,7 @@ jobs:
             PARENT_IMAGE="${CI_REGISTRY}/${{ github.actor }}/${CI_NAME}-${PARENT}:latest"
             podman login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
             podman pull ${CI_REGISTRY}/${{ github.actor }}/${CI_NAME}-${PARENT}:latest
-            podman tag ${CI_REGISTRY}/${{ github.actor }}/${CI_NAME}-${PARENT}:latest localhost/${{ github.actor }}/${CI_NAME}-${PARENT}
+            podman tag ${CI_REGISTRY}/${{ github.actor }}/${CI_NAME}-${PARENT}:latest localhost/${CI_NAME}-${PARENT}
           fi
           podman images
 
@@ -95,7 +95,7 @@ jobs:
           for child in $children
           do
             echo "::group::debug for $child"
-            podman inspect localhost/mafalb/${CI_NAME}-$child
+            podman inspect localhost/${CI_NAME}-$child
             echo "::endgroup::"
           done
 
@@ -105,7 +105,7 @@ jobs:
           for FLAVOR in $FLAVOR $children
           do
             echo "::group::test ${CI_NAME}-$FLAVOR"
-            CI_IMAGE=localhost/mafalb/${CI_NAME}-$child molecule test -s publish --platform-name ci-$FLAVOR
+            CI_IMAGE=localhost/${CI_NAME}-$child molecule test -s publish --platform-name ci-$FLAVOR
             echo "::endgroup::"
           done
 
