@@ -1,0 +1,85 @@
+# vim: set ft=yaml ts=2 expandtab:
+---
+
+name: CI
+on:  # yamllint disable-line rule:truthy
+  workflow_call:
+    inputs:
+      targeted_branch:
+        type: string
+jobs:
+
+  selectbranch:
+    uses: mafalb/workflows/.github/workflows/reusable-selectbranch.yml@prod
+    with:
+      targeted_branch: ${{ inputs.targeted_branch }}
+
+  ansiblecollection:
+    needs: selectbranch
+    uses: mafalb/workflows/.github/workflows/reusable-ansiblecollection.yml@prod
+    with:
+      targeted_branch: ${{ needs.selectbranch.outputs.ref }}
+
+  ci:
+
+    # don't run on pull request from ourselves
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+
+    # note: centos7 needs cgroups v1
+    runs-on: ubuntu-22.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - fedora38
+
+    env:
+      CI_NAME: ${{ matrix.os }}
+      PY_COLORS: 1
+      ANSIBLE_FORCE_COLOR: 1
+
+    steps:
+
+      - name: checkout collection mafalb.containerimages
+        uses: actions/checkout@v4
+        with:
+          path: ansible_collections/mafalb/containerimages
+
+      - name: install necessary tools into a python virtualenv
+        run: |
+          make tools
+
+      - name: test containerimages script
+        run: |
+          bash tests/containerimages.sh
+
+      - name: build base image
+        run: |
+          source ~/.virtualenvs/ci-tools/bin/activate
+          make deps
+          make ${{ matrix.os }}-base
+          podman inspect localhost/${{ matrix.os }}-base
+
+      - name: build systemd image
+        run: |
+          source ~/.virtualenvs/ci-tools/bin/activate
+          make deps
+          make ${{ matrix.os }}-systemd
+          podman inspect localhost/${{ matrix.os }}-systemd
+
+      - name: run tests
+        run: |
+          source ~/.virtualenvs/ci-tools/bin/activate
+          molecule test
+
+  allsuccess:
+    if: success() || failure()
+    uses: mafalb/workflows/.github/workflows/reusable-allsuccess.yml@prod
+    with:
+      joblist: ${{ toJSON(needs) }}
+    needs:
+      - selectbranch
+      - ansiblecollection
+      - ci
+...

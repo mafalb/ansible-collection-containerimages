@@ -10,73 +10,22 @@ on:  # yamllint disable-line rule:truthy
     tags-ignore:
       - '*'
   pull_request:
-  pull_request_review:
+  workflow_dispatch:
+    inputs:
+      targeted_branch:
+        description: The name of the target branch on other repositories
+        type: choice
+        options:
+          - dev
+          - prod
 
 jobs:
 
   ci:
 
-    # don't run on pull request from ourselves
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
-
-    # note: centos7 needs cgroups v1
-    runs-on: ubuntu-20.04
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - centos7
-          - fedora36
-
-    env:
-      CI_NAME: ${{ matrix.os }}
-      PY_COLORS: 1
-      ANSIBLE_FORCE_COLOR: 1
-
-    defaults:
-      run:
-        working-directory: ansible_collections/mafalb/containerimages
-
-    steps:
-
-      - name: checkout collection mafalb.containerimages
-        uses: actions/checkout@v4
-        with:
-          path: ansible_collections/mafalb/containerimages
-
-      - name: install necessary tools into a python virtualenv
-        run: |
-          make tools
-
-      - name: lint
-        run: |
-          source ~/.virtualenvs/ci-tools/bin/activate
-          which ansible-lint
-          ansible-lint --version
-          . tests/lint.sh requirements
-
-      - name: test containerimages script
-        run: |
-          bash tests/containerimages.sh
-
-      - name: build base image
-        run: |
-          source ~/.virtualenvs/ci-tools/bin/activate
-          make deps
-          make ${{ matrix.os }}-base
-          podman inspect localhost/${{ matrix.os }}-base
-
-      - name: build systemd image
-        run: |
-          source ~/.virtualenvs/ci-tools/bin/activate
-          make deps
-          make ${{ matrix.os }}-systemd
-          podman inspect localhost/${{ matrix.os }}-systemd
-
-      - name: run tests
-        run: |
-          source ~/.virtualenvs/ci-tools/bin/activate
-          molecule test
+    if: ${{ ! (github.event.pull_request.head.repo.full_name == github.repository) }}
+    uses: ./.github/workflows/ci-CI.yml
+    with:
+      targeted_branch: ${{ inputs.targeted_branch }}
 
 ...
