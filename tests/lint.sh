@@ -69,5 +69,3 @@ echo "flake8..."
 flake8 -v --exclude tests/output --exclude playbooks/collections
 
 echo "ansible-test sanity..."
-# shellcheck disable=SC2068
-#ansible-test sanity ${args[@]}

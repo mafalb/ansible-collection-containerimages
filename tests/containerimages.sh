@@ -1,4 +1,5 @@
-#/bin/bash
+#!/bin/bash -eu
+# shellcheck disable=SC2002
 
 set -o pipefail
 set -e

@@ -1,3 +1,6 @@
+# Copyright (c) 2022 Markus Falb <markus.falb@mafalb.at>
+# GNU General Public License v3.0+
+# see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
 
 # flake8: noqa: E402
 
@@ -8,7 +11,7 @@ __metaclass__ = type
 DOCUMENTATION = """
   name: info
   author: Markus Falb (@mafalb) <markus.falb@mafalb.at>
-  version_added: "0.1"  # for collections, use the collection version, not the Ansible version
+  version_added: "0.0.1"  # for collections, use the collection version, not the Ansible version
   short_description: return a list of OSes, images or other information.
   description:
       - This lookup get a list of information about containerimages from imagetree.yml.

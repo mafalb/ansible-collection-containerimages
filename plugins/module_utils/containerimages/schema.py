@@ -1,6 +1,16 @@
-#!/bin/python3
+#!/usr/bin/env python
 
-import yaml
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+from ansible.module_utils.basic import AnsibleModule
+
+try:
+    import yaml
+except ImportError as e:
+    YAML_IMPORT_ERROR = e
+else:
+    YAML_IMPORT_ERROR = None
+
 import json
 import sys
 
