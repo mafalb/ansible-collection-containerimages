@@ -2,12 +2,12 @@
 ---
 
 packages:
-- sudo
-- systemd
-- python
-- python-apt
+  - sudo
+  - systemd
+  - python
+  - python-apt
 
 systemd_masked:
-- cgproxy.service
+  - cgproxy.service
 
 ...

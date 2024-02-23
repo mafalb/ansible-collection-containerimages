@@ -2,15 +2,17 @@
 # GNU General Public License v3.0+
 # see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
 ---
-- name: converge
+- name: Converge
   hosts: systemd_group
+
   tasks:
-    - name: sshd is present
-      package:
+
+    - name: Sshd is present
+      ansible.builtin.package:
         name: openssh-server
-    - name: sshd is running
-      service:
+
+    - name: Sshd is running
+      ansible.builtin.service:
         name: sshd
         state: started
-
 ...

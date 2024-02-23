@@ -5,32 +5,34 @@ galaxy_info:
   author: Markus Falb <markus.falb@mafalb.at>
   description: Ansible role mafalb.containerimages.metadata
   license: GPL-3.0-or-later
-  min_ansible_version: 2.9
+  min_ansible_version: '2.14'
 
   # https://galaxy.ansible.com/api/v1/platforms/
   #
   platforms:
-  - name: EL
-    versions:
-    - 7
-    - 8
-  - name: Fedora
-    versions:
-    - 33
-    - 34
-  - name: Ubuntu
-    versions:
-    - xenial
-    - bionic
-    - focal
-  - name: Debian
-    versions:
-    - stretch
-    - buster
-    - bullseye
+    - name: Debian
+      versions:
+        - buster
+        - bullseye
+        - bookworm
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+        - noble
+    - name: EL
+      versions:
+        - "7"
+        - "8"
+        - "9"
+    - name: Fedora
+      versions:
+        - "38"
+        - "39"
+        - "40"
 
   galaxy_tags:
-  - buildah
+    - buildah
 
 dependencies: []
 

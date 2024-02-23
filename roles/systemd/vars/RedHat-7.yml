@@ -2,12 +2,12 @@
 ---
 
 packages:
-- file
-- which
-- sudo
-- iproute
-- systemd
-- yum-plugin-ovl
+  - file
+  - which
+  - sudo
+  - iproute
+  - systemd
+  - yum-plugin-ovl
 
 yum_needs_plugin: true
 

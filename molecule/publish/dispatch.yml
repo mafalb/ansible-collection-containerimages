@@ -3,19 +3,19 @@
 # see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
 ---
 
-- name: dispatch child images
+- name: Dispatch child images
   hosts: localhost
   vars_files: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') + '/imagetree.yml' }}"
   tasks:
 
-    - name: dispatch all childs
-      debug:
+    - name: Dispatch all childs
+      ansible.builtin.debug:
         msg: "dispatch {{ os }}-{{ item }}"
-      loop: "{{ (images[os]|selectattr('flavor', 'equalto', flavor))[0]['children']|default([]) }}"
+      loop: "{{ (images[os] | selectattr('flavor', 'equalto', flavor))[0]['children'] | default([]) }}"
       when:
         - build_dependents
 
-    - name: dispatch build
+    - name: Dispatch build
       ansible.builtin.uri:
         url: https://api.github.com/repos/mafalb/ansible-collection-containerimages/actions/workflows/BUILD.yml/dispatches
         method: POST
@@ -31,12 +31,13 @@
             flavor: "{{ item }}"
             build_dependents: "true"
       register: _api_call
-      loop: "{{ (images[os]|selectattr('flavor', 'equalto', flavor))[0]['children']|default([]) }}"
+      loop: "{{ (images[os] | selectattr('flavor', 'equalto', flavor))[0]['children'] | default([]) }}"
       when:
         - build_dependents
         - "lookup('env','GITHUB_ACTIONS',default='false')"
 
-    - name: debug 
-      debug: var=_api_call
+    - name: Debug 
+      ansible.builtin.debug:
+        var: _api_call
 
 ... 

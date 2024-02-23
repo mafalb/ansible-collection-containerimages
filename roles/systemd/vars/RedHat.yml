@@ -2,20 +2,19 @@
 ---
 
 packages:
-- file
-- which
-- sudo
-- iproute
-- systemd
+  - file
+  - which
+  - sudo
+  - iproute
+  - systemd
 
 packages_to_remove:
-- NetworkManager*
+  - NetworkManager*
 
 systemd_masked:
-- kdump.service
-- auditd.service
-# Failed to create listening socket (audit 1): Operation not permitted
-- systemd-journald-audit.socket
-
+  - kdump.service
+  - auditd.service
+  # Failed to create listening socket (audit 1): Operation not permitted
+  - systemd-journald-audit.socket
 
 ...

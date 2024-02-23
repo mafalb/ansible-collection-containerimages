@@ -4,7 +4,7 @@
 ---
 
   
-- name: converge containerimages
+- name: Converge containerimages
   hosts: all
   vars_files:
     - ansible_bender.yml

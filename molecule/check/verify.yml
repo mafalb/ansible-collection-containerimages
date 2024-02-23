@@ -3,26 +3,27 @@
 # see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
 ---
 
-- name: verify systemd
+- name: Verify systemd
   hosts: systemd_group
   tasks:
 
-    - name: systemd is running without errors  # noqa: command-instead-of-module
-      command: systemctl is-system-running
+    - name: Systemd is running without errors  # noqa: command-instead-of-module
+      ansible.builtin.command:
+        cmd: systemctl is-system-running
       changed_when: false
 
-    - name: sshd is running
-      service:
+    - name: Sshd is running
+      ansible.builtin.service:
         name: sshd
         state: started
 
-- name: verify all
+- name: Verify all
   hosts: ci_group
   order: sorted
   vars_files: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') + '/imagetree.yml' }}"
 
   handlers:
-    - name: dispatch build
+    - name: Dispatch build
       ansible.builtin.uri:
         url: https://api.github.com/repos/mafalb/ansible-collection-containerimages/actions/workflows/BUILD.yml/dispatches
         method: POST
@@ -46,7 +47,7 @@
 
     # do not fail it as this point
     # do a dispatch first
-    - name: all updates are installed  # noqa: package-latest
+    - name: All updates are installed  # noqa: package-latest
       ansible.builtin.package:
         name: '*'
         state: latest
@@ -54,14 +55,14 @@
       check_mode: true
       notify: dispatch build
 
-- name: verify all
+- name: Verify all
   hosts: ci_group
   order: sorted
   vars_files: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') + '/imagetree.yml' }}"
   tasks:
     # fail it now that a build is dispatched
-    - name: assertions
-      assert:
+    - name: Assertions
+      ansible.builtin.assert:
         msg: "Not all available updates are installed in this image"
         that:
           - not _updates.changed

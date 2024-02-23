@@ -3,7 +3,7 @@
 # see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
 ---
 
-- name: publish the image
+- name: Publish the image
   hosts: localhost
   vars:
     container_tag: "\
@@ -15,7 +15,7 @@
 
   tasks:
 
-    - name: login to the registry
+    - name: Login to the registry
       containers.podman.podman_login:
         username: "{{ registry_user }}"
         password: "{{ registry_token }}"
@@ -23,7 +23,7 @@
 
     # does not work
     # https://github.com/containers/ansible-podman-collections/issues/218
-    - name: push the image
+    - name: Push the image
       when: false
       containers.podman.podman_image:
         name: localhost/{{ registry_user }}/{{ os }}-{{ flavor }}:latest
@@ -32,16 +32,20 @@
         push_args:
           dest: "{{ registry }}/{{ registry_user }}/{{ os }}-{{ flavor }}:latest"
 
-    - name: push the image  # noqa: no-changed-when
-      command: podman push localhost/{{ registry_user }}/{{ os }}-{{ flavor }}:latest {{ registry }}/{{ registry_user }}/{{ os }}-{{ flavor }}:{{ container_tag }}
+    - name: Push the image  # noqa: no-changed-when
+      ansible.builtin.command:
+        cmd: podman push localhost/{{ registry_user }}/{{ os }}-{{ flavor }}:latest {{ registry }}/{{ registry_user }}/{{ os }}-{{ flavor }}:{{ container_tag }}
       register: _push_output
-    - name: debug
-      debug: var=_push_output
+    - name: Debug
+      ansible.builtin.debug:
+        var: _push_output
 
-    - name: push the image  # noqa: no-changed-when
-      command: podman push localhost/{{ registry_user }}/{{ os }}-{{ flavor }}:latest {{ registry }}/{{ registry_user }}/{{ os }}-{{ flavor }}:latest
+    - name: Push the image  # noqa: no-changed-when
+      ansible.builtin.command:
+        cmd: podman push localhost/{{ registry_user }}/{{ os }}-{{ flavor }}:latest {{ registry }}/{{ registry_user }}/{{ os }}-{{ flavor }}:latest
       register: _push_output
-    - name: debug
-      debug: var=_push_output
+    - name: Debug
+      ansible.builtin.debug:
+        var: _push_output
 
 ... 

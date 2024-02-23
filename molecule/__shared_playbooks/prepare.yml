@@ -3,7 +3,7 @@
 # see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
 ---
 
-- name: prepare
+- name: Prepare
   hosts: systemd_group
 
   pre_tasks:
@@ -12,10 +12,11 @@
     # note that older systemd has no --wait
     # therefore the loop
     #
-    - name: Wait for systemd to complete initialization. # noqa 303
-      command: systemctl is-system-running
+    - name: Wait for systemd to complete initialization. # noqa command-instead-of-module
+      ansible.builtin.command:
+        cmd: systemctl is-system-running
       register: _has_booted
-      until: _has_booted.stdout in ['running','degraded']
+      until: _has_booted.stdout in ['running', 'degraded']
       retries: 120
       delay: 1
       changed_when: false

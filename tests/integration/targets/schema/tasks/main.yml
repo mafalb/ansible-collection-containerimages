@@ -3,29 +3,36 @@
 # see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
 ---
 
-- name: debug
-  debug: msg="{{ lookup('mafalb.containerimages.info', action='list_oses') }}"
+- name: Debug
+  ansible.builtin.debug:
+    msg: "{{ lookup('mafalb.containerimages.info', action='list_oses') }}"
 
-- name: debug
-  debug: msg="{{ lookup('mafalb.containerimages.info', action='list_images', os='centos7') }}"
+- name: Debug
+  ansible.builtin.debug:
+    msg: "{{ lookup('mafalb.containerimages.info', action='list_images', os='centos7') }}"
 
-- name: debug
-  debug: msg="{{ lookup('mafalb.containerimages.info', action='get_parent', os='centos7', image='systemd') }}"
+- name: Debug
+  ansible.builtin.debug:
+    msg: "{{ lookup('mafalb.containerimages.info', action='get_parent', os='centos7', image='systemd') }}"
 
-- name: debug
-  debug: msg="{{ lookup('mafalb.containerimages.info', action='get_parentimage', os='centos7', image='systemd') }}"
+- name: Debug
+  ansible.builtin.debug:
+    msg: "{{ lookup('mafalb.containerimages.info', action='get_parentimage', os='centos7', image='systemd') }}"
 
-- name: debug
-  debug: msg="{{ lookup('mafalb.containerimages.info', action='list_children', os='centos7', image='base') }}"
+- name: Debug
+  ansible.builtin.debug:
+    msg: "{{ lookup('mafalb.containerimages.info', action='list_children', os='centos7', image='base') }}"
 
-- name: debug
-  debug: msg="{{ lookup('mafalb.containerimages.info', action='get_baseimage', os='centos7', image='base') }}"
+- name: Debug
+  ansible.builtin.debug:
+    msg: "{{ lookup('mafalb.containerimages.info', action='get_baseimage', os='centos7', image='base') }}"
 
-- name: debug
-  debug: msg="{{ lookup('mafalb.containerimages.info', action='get_baseimage', os='centos7', image='systemd') }}"
+- name: Debug
+  ansible.builtin.debug:
+    msg: "{{ lookup('mafalb.containerimages.info', action='get_baseimage', os='centos7', image='systemd') }}"
 
-- name: assertions
-  assert:
+- name: Assertions
+  ansible.builtin.assert:
     that:
       - lookup('mafalb.containerimages.info', action='list_oses')|type_debug == 'list'
       - lookup('mafalb.containerimages.info', action='list_images', os='centos7')|type_debug == 'list'

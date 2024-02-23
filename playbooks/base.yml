@@ -3,18 +3,18 @@
 # see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
 ---
 
-- name: converge containerimages
+- name: Converge containerimages
   hosts: all
   vars_files:
     - ansible_bender.yml
   vars:
     ansible_bender: "{{ _ansible_bender[lookup('ansible.builtin.env','OS', default=Undefined) + '-base'] }}"
   tasks:
-    - name: all packages are updated  # noqa: package-latest
+    - name: All packages are updated  # noqa: package-latest
       ansible.builtin.package:
         name: "*"
         state: latest
-    - name: clean the cache
+    - name: Clean the cache
       ansible.builtin.command: yum clean all
       changed_when: false
 

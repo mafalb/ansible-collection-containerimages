@@ -3,35 +3,35 @@
 # see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
 ---
 
-- name: verify systemd
+- name: Verify systemd
   hosts: systemd_group
   tasks:
 
-    - name: systemd is running without errors  # noqa: command-instead-of-module
-      command: systemctl is-system-running
+    - name: Systemd is running without errors  # noqa: command-instead-of-module
+      ansible.builtin.command: systemctl is-system-running
       changed_when: false
 
-    - name: sshd is running
-      service:
+    - name: Sshd is running
+      ansible.builtin.service:
         name: sshd
         state: started
 
-- name: verify all
+- name: Verify all
   hosts: ci_group
   order: sorted
   vars_files: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') + '/imagetree.yml' }}"
 
   tasks:
 
-    - name: all updates are installed  # noqa: package-latest
+    - name: All updates are installed  # noqa: package-latest
       ansible.builtin.package:
         name: '*'
         state: latest
       register: _updates
       check_mode: true
 
-    - name: assertions
-      assert:
+    - name: Assertions
+      ansible.builtin.assert:
         msg: "Not all available updates are installed in this image"
         that:
           - not _updates.changed

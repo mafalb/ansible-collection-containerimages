@@ -1,1 +1,7 @@
+---
+skip_list:
+  - var-naming[no-role-prefix]
+  - schema[meta]
+  - galaxy[version-incorrect]
 warn_list: []
+...

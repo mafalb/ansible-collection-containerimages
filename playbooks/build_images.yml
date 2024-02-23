@@ -3,57 +3,59 @@
 # see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
 ---
 
-- name: create virtual inventory
+- name: Create virtual inventory
   hosts: localhost
   gather_facts: false
 
   tasks:
 
     # we create pseudo hosts, but delegate the plays to localhost later
-    - name: add pseudo host for this image to inventory
+    - name: Add pseudo host for this image to inventory
       ansible.builtin.add_host:
         hostname: "{{ image }}"
         groups:
           - image_group
 
-    - name: add pseudo hosts for child images to inventory, if necessary
-      when: build_children|default(false)
+    - name: Add pseudo hosts for child images to inventory, if necessary
+      when: build_children | default(false)
       ansible.builtin.add_host:
         hostname: "{{ item }}"
         groups:
           - image_group
       loop: "{{ lookup('mafalb.containerimages.info', action='list_children', os=os, image=image) }}"
 
-    - name: debug groups
-      debug: var=groups
+    - name: Debug groups
+      ansible.builtin.debug:
+        var: groups
       tags:
         - never
         - debug
 
-- name: create images
+- name: Create images
   hosts: image_group
   gather_facts: false
   connection: local
-  strategy: free
+  strategy: free  # noqa run-once[play]
   tasks:
 
-    - name: wait for parent image build
-      ansible.builtin.command: |
-        podman inspect localhost/{{ os }}-{{  lookup('mafalb.containerimages.info', action='get_parent', os=os, image=inventory_hostname) }}:latest
+    - name: Wait for parent image build
+      ansible.builtin.command:
+        cmd: podman inspect localhost/{{ os }}-{{ lookup('mafalb.containerimages.info', action='get_parent', os=os, image=inventory_hostname) }}:latest
       register: _parent_was_built
-      until: _parent_was_built.rc == 0 or lookup('mafalb.containerimages.info', action='get_parent', os=os, image=inventory_hostname)|length == 0
+      until: _parent_was_built.rc == 0 or lookup('mafalb.containerimages.info', action='get_parent', os=os, image=inventory_hostname) | length == 0
       delay: 1
       retries: 1200
       async: 1200
       when:
-        - lookup('mafalb.containerimages.info', action='get_parent', os=os, image=inventory_hostname)|length > 0
+        - lookup('mafalb.containerimages.info', action='get_parent', os=os, image=inventory_hostname) | length > 0
         - lookup('mafalb.containerimages.info', action='get_parent', os=os, image=inventory_hostname) in groups['image_group']
+      changed_when: false
 
-    - name: build image
+    - name: Build image
       community.general.make:
         chdir: "{{ playbook_dir }}/.."
         target: "{{ os }}-{{ inventory_hostname }}"
         params:
-          BASE_IMAGE: "{{ lookup('mafalb.containerimages.info', action='get_baseimage', os=os, image=inventory_hostname)|default('ghcr.io/mafalb/' + os + '-' + inventory_hostname) }}"
+          BASE_IMAGE: "{{ lookup('mafalb.containerimages.info', action='get_baseimage', os=os, image=inventory_hostname) | default('ghcr.io/mafalb/' + os + '-' + inventory_hostname) }}"
 
 ...

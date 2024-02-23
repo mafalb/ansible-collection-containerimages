@@ -3,11 +3,12 @@
 # see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
 ---
 
-- name: publish the image
+- name: Publish the image
   hosts: localhost
   tasks:
 
-    - name: debug
-      debug: msg="side_effect.yml"
+    - name: Debug
+      ansible.builtin.debug:
+        msg: "side_effect.yml"
 
 ... 
