@@ -22,6 +22,12 @@ fedora36-base: deps
 fedora36-systemd: deps
 	ANSIBLE_COLLECTIONS_PATHS=../../..:playbooks/collections OS=fedora36 ansible-bender build -l org.opencontainers.image.created=$(DATE2) -- playbooks/systemd.yml $(if $(BASE_IMAGE), $(BASE_IMAGE), localhost/fedora36-base) $(if $(TARGET_IMAGE), $(TARGET_IMAGE), localhost/fedora36-systemd)
 
+fedora38-base: deps
+	OS=fedora38 ansible-bender build -l org.opencontainers.image.created=$(DATE2) --squash playbooks/base.yml $(if $(BASE_IMAGE), $(BASE_IMAGE), registry.fedoraproject.org/fedora:38) $(if $(TARGET_IMAGE), $(TARGET_IMAGE), localhost/fedora38-base)
+
+fedora38-systemd: deps
+	ANSIBLE_COLLECTIONS_PATHS=../../..:playbooks/collections OS=fedora38 ansible-bender build -l org.opencontainers.image.created=$(DATE2) -- playbooks/systemd.yml $(if $(BASE_IMAGE), $(BASE_IMAGE), localhost/fedora38-base) $(if $(TARGET_IMAGE), $(TARGET_IMAGE), localhost/fedora38-systemd)
+
 tools:
 	mkdir -p ~/.virtualenvs/ci-tools
 	python3 -m venv ~/.virtualenvs/ci-tools
