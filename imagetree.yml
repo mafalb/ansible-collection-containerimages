@@ -21,4 +21,13 @@ images:
         - systemd
     - flavor: systemd
       parent: base
+
+  fedora38:
+    - os: fedora38
+      flavor: base
+      base_image: registry.fedoraproject.org/fedora:38
+      children:
+        - systemd
+    - flavor: systemd
+      parent: base
 ...
