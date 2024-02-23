@@ -39,6 +39,10 @@ jobs:
       PY_COLORS: 1
       ANSIBLE_FORCE_COLOR: 1
 
+    defaults:
+      run:
+        working-directory: ansible_collections/mafalb/containerimages
+
     steps:
 
       - name: checkout collection mafalb.containerimages
