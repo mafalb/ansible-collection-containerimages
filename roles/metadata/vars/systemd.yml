@@ -1,5 +1,5 @@
 ---
-containerimage_systemd_cmd: /lib/systemd/systemd
+containerimage_cmd: /lib/systemd/systemd
 containerimage_stopsignal: SIGRTMIN+3
 containerimage_volumes:
   - /sys/fs/cgroup
