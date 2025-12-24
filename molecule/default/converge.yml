@@ -1,0 +1,56 @@
+# Copyright (c) 2022 Markus Falb <markus.falb@mafalb.at>
+# GNU General Public License v3.0+
+# see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
+---
+- name: Converge
+  hosts: localhost
+  vars:
+    base_image: "{{ (image_json|from_json).base_image }}"
+    role: "{{ (image_json|from_json).role }}"
+  tasks:
+
+    - name: Create a Buildah container
+      ansible.builtin.command:
+        cmd: buildah from --name buildah-ci-rocky10-systemd quay.io/rockylinux/rockylinux:10
+      check_mode: false
+      ignore_errors: true
+
+    - name: Add newly created buildah container to inventory
+      ansible.builtin.add_host:
+        name: buildah-ci-rocky10-systemd
+        groups:
+          - buildah
+
+- name: Play Container Build
+  hosts: buildah
+  connection: containers.podman.buildah
+
+  tasks:
+
+    - ansible.builtin.include_role:
+        name: mafalb.containerimages.systemd
+
+    - ansible.builtin.include_role:
+        name: mafalb.containerimages.cleanup
+
+
+- name: Play Commit Buildah
+  hosts: localhost
+    
+  tasks:
+
+    - name: Include Role for setting container metadata
+      ansible.builtin.include_role:
+        name: mafalb.containerimages.metadata
+      vars:
+        containerimage_name: "Irgendein Test Image"
+        containerimage_author: Irgendwer
+        base_image: quay.io/rockylinux/rockylinux:10
+        buildah_image: buildah-ci-rocky10-systemd
+
+    - name: Commit existing Buildah container
+      ansible.builtin.command:
+        cmd: buildah commit buildah-ci-rocky10-systemd localhost/test/rockylinux:10
+      register: _buildah_containers
+
+...

@@ -19,7 +19,8 @@ images:
       base_image: registry.fedoraproject.org/fedora:36
       children:
         - systemd
-    - flavor: systemd
+    - os: fedora36
+      flavor: systemd
       parent: base
 
   fedora38:

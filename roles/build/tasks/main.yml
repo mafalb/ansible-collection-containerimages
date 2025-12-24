@@ -1,0 +1,22 @@
+# Copyright (c) 2021,2022 Markus Falb <markus.falb@mafalb.at>
+# GNU General Public License v3.0+
+# see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
+
+---
+
+- name: Assertions
+  ansible.builtin.assert:
+    that:
+      - date is defined
+      - datetime_iso is defined
+      - image is defined
+      - flavor is defined
+      - base_image
+
+- name: Build image
+  environment:
+    OS: "{{ os }}"
+    ANSIBLE_COLLECTIONS_PATHS: "../../.."
+  ansible.builtin.command:  # noqa no-changed-when inline-env-var
+    chdir: "{{ role_path }}/../.."
+    cmd: ansible-bender build -l org.label-schema.build-date={{ date }} org.opencontainers.image.created={{ datetime_iso }} --squash {{ role_path }}/../playbooks/{{ flavor }}.yml {{ base_image }} {{ target_image }}

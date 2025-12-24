@@ -1,6 +1,13 @@
 # vim: set ft=yaml ts=2 expandtab:
 ---
 
+- name: Get OS specific data
+  ansible.builtin.include_vars:
+    file: "{{ item }}"
+  with_first_found:
+      - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+      - empty.yml
+
 - name: Generate timestamp
   ansible.builtin.debug:
     msg: "{{ ansible_date_time.iso8601 }}"
@@ -13,10 +20,9 @@
 - name: Assertions
   ansible.builtin.assert:
     that:
-    - ci_name|length > 0
-    - ci_image|length > 0
-    - image_name is defined
-    - image_author is defined
+    - base_image|length > 0
+    - containerimage_name is defined
+    - containerimage_author is defined
     - source_uri is defined
     - source_sha is defined
     - now is defined
@@ -24,18 +30,42 @@
 - name: Set image configuration  # noqa: no-changed-when
   ansible.builtin.command:
     cmd: "{{ item }}"
-  delegate_to: localhost
   loop:
-  - buildah config --cmd /lib/systemd/systemd {{ inventory_hostname }}
-  - buildah config --stop-signal SIGRTMIN+3 {{ inventory_hostname }}
-  - buildah config --author "{{ image_author }}" {{ inventory_hostname }}
-  - buildah config --env container=docker {{ inventory_hostname }}
-  - buildah config --volume /sys/fs/cgroup {{ inventory_hostname }}
+    - buildah config --env container=docker {{ buildah_image }}
+    - buildah config --author {{ containerimage_author }} {{ buildah_image }}
+
+- name: Set image configuration  # noqa: no-changed-when
+  ansible.builtin.command:
+    cmd: buildah config --env {{ _env }} {{ buildah_image }}
+  delegate_to: localhost
+  loop: "{{ containerimage_environment_variables|default([]) }}"
+  loop_control:
+    loop_var: _env
+
+- name: Set image configuration  # noqa: no-changed-when
+  ansible.builtin.command:
+    cmd: buildah config --cmd {{ containerimage_cmd }} {{ buildah_image }}
+  delegate_to: localhost
+  when: containerimage_cmd is defined
+
+- name: Set image configuration  # noqa: no-changed-when
+  ansible.builtin.command:
+    cmd: buildah config --stop-signal {{ containerimage_stopsignal }} {{ buildah_image }}
+  delegate_to: localhost
+  when: containerimage_stopsignal is defined
+
+- name: Set image configuration  # noqa: no-changed-when
+  ansible.builtin.command:
+    cmd: buildah config --volume {{ _volume }} {{ buildah_image }}
+  delegate_to: localhost
+  loop: "{{ containerimage_volumes|default([]) }}"
+  loop_control:
+    loop_var: _volume
 
 - name: Get image data
   delegate_to: localhost
   containers.podman.podman_image_info:
-    name: "{{ ci_image }}"
+    name: "{{ base_image }}"
   register: _base_image_data
 
 - name: Debug
@@ -47,7 +77,7 @@
     cmd: "{{ item }}"
   delegate_to: localhost
   loop:
-  - buildah config --label org.opencontainers.image.licenses='{{ _base_image_data.images[0].Labels['org.label-schema.license'] }}' {{ inventory_hostname }}
+  - buildah config --label org.opencontainers.image.licenses="{{ _base_image_data.images[0].Labels['org.label-schema.license'] }}" {{ buildah_image }}
   when:
   - _base_image_data.images[0].Labels['org.label-schema.name'] is defined
 
@@ -56,13 +86,13 @@
     cmd: "{{ item }}"
   delegate_to: localhost
   loop:
-  - buildah config --label org.opencontainers.image.licenses='{{ _base_image_data.images[0].Labels['license'] }}' {{ inventory_hostname }}
+  - buildah config --label org.opencontainers.image.licenses='{{ _base_image_data.images[0].Labels['license'] }}' {{ buildah_image }}
   when:
   - _base_image_data.images[0].Labels['license'] is defined
 
 - name: Remove all org.label.schema. labels  # noqa no-changed-when
   ansible.builtin.command:
-    cmd: buildah config --label {{ item['key'] }}- {{ inventory_hostname }}
+    cmd: buildah config --label {{ item['key'] }}- {{ buildah_image }}
   loop: "{{ ({} if _base_image_data.images[0].Labels == None else _base_image_data.images[0].Labels) | default({}) | dict2items }}"
   delegate_to: localhost
   when:
@@ -71,14 +101,13 @@
 - name: Set image configuration  # noqa: no-changed-when
   ansible.builtin.command:
     cmd: "{{ item }}"
-  delegate_to: localhost
   loop:
-  - buildah config --label org.opencontainers.image.base.digest={{ _base_image_data.images[0].Id }} {{ inventory_hostname }}
-  - buildah config --label org.opencontainers.image.base.name={{ ci_image }} {{ inventory_hostname }}
-  - buildah config --label org.opencontainers.image.source='{{ source_uri }}' {{ inventory_hostname }}
-  - buildah config --label org.opencontainers.image.revision='{{ source_sha }}' {{ inventory_hostname }}
-  - buildah config --label org.opencontainers.image.title='{{ image_name }}' {{ inventory_hostname }}
-  - buildah config --label org.opencontainers.image.vendor='{{ image_author }}' {{ inventory_hostname }}
-  - buildah config --label org.opencontainers.image.created='{{ now.msg }}' {{ inventory_hostname }}
+  - buildah config --label org.opencontainers.image.base.digest={{ _base_image_data.images[0].Id }} {{ buildah_image }}
+  - buildah config --label org.opencontainers.image.base.name={{ base_image }} {{ buildah_image }}
+  - buildah config --label org.opencontainers.image.source='{{ source_uri }}' {{ buildah_image }}
+  - buildah config --label org.opencontainers.image.revision='{{ source_sha }}' {{ buildah_image }}
+  - buildah config --label org.opencontainers.image.title='{{ containerimage_name }}' {{ buildah_image }}
+  - buildah config --label org.opencontainers.image.vendor='{{ containerimage_author }}' {{ buildah_image }}
+  - buildah config --label org.opencontainers.image.created='{{ now.msg }}' {{ buildah_image }}
 
 ...

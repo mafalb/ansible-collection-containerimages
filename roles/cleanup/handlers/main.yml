@@ -1,0 +1,9 @@
+---
+
+- name: Commit buildah container
+  ansible.builtin.command:
+    cmd: buildah commit {{ os }}-{{ role }} {{ image }}
+  when:
+    - os is defined
+    - role is defined
+    - image is defined
