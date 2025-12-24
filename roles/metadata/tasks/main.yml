@@ -72,42 +72,4 @@
   ansible.builtin.debug:
     var: _base_image_data.images[0].Id
 
-- name: Preserve license information  # noqa: no-changed-when
-  ansible.builtin.command:
-    cmd: "{{ item }}"
-  delegate_to: localhost
-  loop:
-  - buildah config --label org.opencontainers.image.licenses="{{ _base_image_data.images[0].Labels['org.label-schema.license'] }}" {{ buildah_image }}
-  when:
-  - _base_image_data.images[0].Labels['org.label-schema.name'] is defined
-
-- name: Preserve license information  # noqa: no-changed-when
-  ansible.builtin.command:
-    cmd: "{{ item }}"
-  delegate_to: localhost
-  loop:
-  - buildah config --label org.opencontainers.image.licenses='{{ _base_image_data.images[0].Labels['license'] }}' {{ buildah_image }}
-  when:
-  - _base_image_data.images[0].Labels['license'] is defined
-
-- name: Remove all org.label.schema. labels  # noqa no-changed-when
-  ansible.builtin.command:
-    cmd: buildah config --label {{ item['key'] }}- {{ buildah_image }}
-  loop: "{{ ({} if _base_image_data.images[0].Labels == None else _base_image_data.images[0].Labels) | default({}) | dict2items }}"
-  delegate_to: localhost
-  when:
-  - item['key'] is match('org.label.schema.')
-
-- name: Set image configuration  # noqa: no-changed-when
-  ansible.builtin.command:
-    cmd: "{{ item }}"
-  loop:
-  - buildah config --label org.opencontainers.image.base.digest={{ _base_image_data.images[0].Id }} {{ buildah_image }}
-  - buildah config --label org.opencontainers.image.base.name={{ base_image }} {{ buildah_image }}
-  - buildah config --label org.opencontainers.image.source='{{ source_uri }}' {{ buildah_image }}
-  - buildah config --label org.opencontainers.image.revision='{{ source_sha }}' {{ buildah_image }}
-  - buildah config --label org.opencontainers.image.title='{{ containerimage_name }}' {{ buildah_image }}
-  - buildah config --label org.opencontainers.image.vendor='{{ containerimage_author }}' {{ buildah_image }}
-  - buildah config --label org.opencontainers.image.created='{{ now.msg }}' {{ buildah_image }}
-
 ...
