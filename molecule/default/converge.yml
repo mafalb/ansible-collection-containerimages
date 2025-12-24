@@ -27,10 +27,12 @@
 
   tasks:
 
-    - ansible.builtin.include_role:
+    - name: Include Role for installing systemd
+      ansible.builtin.include_role:
         name: mafalb.containerimages.systemd
 
-    - ansible.builtin.include_role:
+    - name: Include Role for cleaning up
+      ansible.builtin.include_role:
         name: mafalb.containerimages.cleanup
 
 

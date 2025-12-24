@@ -5,9 +5,4 @@
 
 mafalb_containerimages_systemd_state: present
 image_name: "{{ ansible_distribution }} {{ ansible_distribution_major_version }} Systemd Image"
-
-containerimage_systemd_cmd: /lib/systemd/systemd
-containerimage_stopsignal: SIGRTMIN+3
-containerimage_volumes:
-  - /sys/fs/cgroup
 ...

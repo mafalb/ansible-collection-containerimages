@@ -1,0 +1,19 @@
+---
+ansible-navigator:
+  ansible:
+    config:
+      path: ansible.cfg
+
+  ansible-runner:
+    artifact-dir: log
+  execution-environment:
+    container-engine: podman
+    image: localhost/anode-ee:latest
+    pull:
+      policy: never
+  logging:
+    level: critical
+    file: log/ansible-navigator.log
+  mode: stdout
+  playbook-artifact:
+    save-as: log/{playbook_name}-artifact-{time_stamp}.json

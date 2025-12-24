@@ -8,6 +8,13 @@
       - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
       - empty.yml
 
+- name: Get role specific data
+  ansible.builtin.include_vars:
+    file: "{{ item }}"
+  with_first_found:
+      - "{{ containerimage_role }}.yml"
+      - empty.yml
+
 - name: Generate timestamp
   ansible.builtin.debug:
     msg: "{{ ansible_date_time.iso8601 }}"
@@ -33,32 +40,33 @@
   loop:
     - buildah config --env container=docker {{ buildah_image }}
     - buildah config --author {{ containerimage_author }} {{ buildah_image }}
+    - buildah config --created-by "buildah and ansible by mafalb" {{ buildah_image }}
 
-- name: Set image configuration  # noqa: no-changed-when
+- name: Set image ENV  # noqa: no-changed-when
   ansible.builtin.command:
     cmd: buildah config --env {{ _env }} {{ buildah_image }}
   delegate_to: localhost
-  loop: "{{ containerimage_environment_variables|default([]) }}"
+  loop: "{{ containerimage_environment_variables | default([]) }}"
   loop_control:
     loop_var: _env
 
-- name: Set image configuration  # noqa: no-changed-when
+- name: Set image cmd  # noqa: no-changed-when
   ansible.builtin.command:
     cmd: buildah config --cmd {{ containerimage_cmd }} {{ buildah_image }}
   delegate_to: localhost
   when: containerimage_cmd is defined
 
-- name: Set image configuration  # noqa: no-changed-when
+- name: Set image stopsignal  # noqa: no-changed-when
   ansible.builtin.command:
     cmd: buildah config --stop-signal {{ containerimage_stopsignal }} {{ buildah_image }}
   delegate_to: localhost
   when: containerimage_stopsignal is defined
 
-- name: Set image configuration  # noqa: no-changed-when
+- name: Set image volumes  # noqa: no-changed-when
   ansible.builtin.command:
     cmd: buildah config --volume {{ _volume }} {{ buildah_image }}
   delegate_to: localhost
-  loop: "{{ containerimage_volumes|default([]) }}"
+  loop: "{{ containerimage_volumes | default([]) }}"
   loop_control:
     loop_var: _volume
 
