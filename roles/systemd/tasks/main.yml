@@ -1,10 +1,9 @@
-# vim: set ft=yaml ts=2 expandtab:
 ---
 
-- name: Get OS specific variables
+- name: Include OS specific variables
   with_first_found:
-  - "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
-  - "{{ ansible_os_family }}.yml"
+    - "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
+    - "{{ ansible_os_family }}.yml"
   ansible.builtin.include_vars:
     file: "{{ item }}"
 
@@ -16,23 +15,23 @@
     backup: true
   when: yum_needs_plugin|default(false)|bool
 
-- name: Required packages are present
-  ansible.builtin.package:
-    name: "{{ packages }}"
-
 - name: Unwanted packages are absent
   ansible.builtin.package:
     name: "{{ packages_to_remove }}"
     state: absent
   when: packages_to_remove is defined
 
+- name: Required packages are present
+  ansible.builtin.package:
+    name: "{{ packages }}"
+
 - name: Find unneeded systemd files
   ansible.builtin.find:
     paths:
-    - /lib/systemd/system/sockets.target.wants
+      - /lib/systemd/system/sockets.target.wants
     patterns:
-    - '*udev*'
-    - '*initctl*'
+      - '*udev*'
+      - '*initctl*'
     file_type: link
   register: _unneeded_files_1
 
@@ -46,8 +45,8 @@
     - /lib/systemd/system/anaconda.target.wants
     file_type: link
     excludes:
-    - systemd-tmpfiles-setup.service
-    - systemd-user-sessions.service
+      - systemd-tmpfiles-setup.service
+      - systemd-user-sessions.service
   register: _unneeded_files_2
 
 - name: Unneeded systemd files are absent

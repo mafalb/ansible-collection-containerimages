@@ -1,0 +1,4 @@
+- name: All packages are updated  # noqa: package-latest
+  ansible.builtin.package:
+    name: "*"
+    state: latest
